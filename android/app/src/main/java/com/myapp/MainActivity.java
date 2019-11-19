@@ -1,4 +1,4 @@
-package com.kodokanpro64;
+package com.myapp;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "kodokanpro64";
+    return "MyApp";
   }
 }

@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.kodokanpro64"
+        applicationId "com.myapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

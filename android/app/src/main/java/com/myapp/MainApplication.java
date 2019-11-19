@@ -1,4 +1,4 @@
-package com.kodokanpro64;
+package com.myapp;
 
 import android.app.Application;
 import android.content.Context;
