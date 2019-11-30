@@ -1,5 +1,5 @@
 {
-  "name": "MyApp",
+  "name": "kodokanpro64",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -35,5 +35,9 @@
       "json",
       "node"
     ]
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/RNFDigital/kodokanpro64.git",
+  "author": "Mike Mannion <mike.mannion@rnfdigital.com>",
+  "license": "MIT"
 }
