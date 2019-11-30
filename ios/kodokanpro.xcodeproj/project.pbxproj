@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* kodokanproTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* kodokanproTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -37,13 +36,6 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "kodokanpro-tvOS";
 		};
-		87C8D6A22392A62F002BABD4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 87C8D69E2392A62F002BABD4 /* SplashScreen.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D7682761D8E76B80014119E;
-			remoteInfo = SplashScreen;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -66,7 +58,6 @@
 		57D199BBA170DEEF589EE14E /* Pods-kodokanpro.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kodokanpro.debug.xcconfig"; path = "Target Support Files/Pods-kodokanpro/Pods-kodokanpro.debug.xcconfig"; sourceTree = "<group>"; };
 		6E77085AC493009A8474A019 /* Pods-kodokanproTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kodokanproTests.debug.xcconfig"; path = "Target Support Files/Pods-kodokanproTests/Pods-kodokanproTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7BA169EF3AD725E6F87317E2 /* libPods-kodokanpro-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kodokanpro-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		87C8D69E2392A62F002BABD4 /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
 		8AB7F9A9B0BB37F10CBF7861 /* Pods-kodokanpro-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kodokanpro-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-kodokanpro-tvOS/Pods-kodokanpro-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		92311276DF76CFC96456E64E /* Pods-kodokanpro-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kodokanpro-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-kodokanpro-tvOSTests/Pods-kodokanpro-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		92AA0AA36304AB936BE6B115 /* Pods-kodokanpro.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kodokanpro.release.xcconfig"; path = "Target Support Files/Pods-kodokanpro/Pods-kodokanpro.release.xcconfig"; sourceTree = "<group>"; };
@@ -160,7 +151,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				87C8D69E2392A62F002BABD4 /* SplashScreen.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -187,14 +177,6 @@
 				00E356EE1AD99517003FC87E /* kodokanproTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* kodokanpro-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* kodokanpro-tvOSTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		87C8D69F2392A62F002BABD4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				87C8D6A32392A62F002BABD4 /* libSplashScreen.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -301,7 +283,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 940;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -331,10 +313,6 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
-				{
-					ProductGroup = 87C8D69F2392A62F002BABD4 /* Products */;
-					ProjectRef = 87C8D69E2392A62F002BABD4 /* SplashScreen.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -347,13 +325,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		87C8D6A32392A62F002BABD4 /* libSplashScreen.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSplashScreen.a;
-			remoteRef = 87C8D6A22392A62F002BABD4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -630,6 +601,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/kodokanpro.app/kodokanpro";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 			};
 			name = Debug;
 		};
@@ -650,6 +624,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/kodokanpro.app/kodokanpro";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 			};
 			name = Release;
 		};
@@ -678,7 +655,6 @@
 					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
 					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
 					"\"${PODS_ROOT}/Headers/Public/glog\"",
-					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 				);
 				INFOPLIST_FILE = kodokanpro/Info.plist;
@@ -718,7 +694,6 @@
 					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
 					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
 					"\"${PODS_ROOT}/Headers/Public/glog\"",
-					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 				);
 				INFOPLIST_FILE = kodokanpro/Info.plist;
@@ -759,6 +734,9 @@
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 			};
 			name = Debug;
 		};
@@ -787,6 +765,9 @@
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 			};
 			name = Release;
 		};
@@ -814,6 +795,9 @@
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/kodokanpro-tvOS.app/kodokanpro-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 			};
 			name = Debug;
 		};
@@ -841,6 +825,9 @@
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/kodokanpro-tvOS.app/kodokanpro-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+				);
 			};
 			name = Release;
 		};
