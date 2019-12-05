@@ -1,0 +1,115 @@
+import React, { useEffect } from 'react'
+import { Image, StyleSheet } from 'react-native'
+import SplashScreen from 'react-native-splash-screen'
+import { PRIMARY_COLOUR } from './theme/colours'
+import { createAppContainer } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
+import { createBottomTabNavigator } from 'react-navigation-tabs'
+import DictionaryScreen from './dictionary/index'
+import WazaScreen from './waza/index'
+import GokyoScreen from './gokyo/index'
+import GiScreen from './gi/index'
+import AboutScreen from './about/index'
+
+const styles = StyleSheet.create({
+  icon: {
+    height: 25,
+    width: 38,
+  },
+})
+
+const MainNavigator = createBottomTabNavigator(
+  {
+    Dictionary: {
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => (
+          <Image
+            source={require('./images/tabbar-dictionary.png')}
+            style={[styles.icon, { tintColor }]}
+          />
+        ),
+        tabBarLabel: 'Dictionary',
+      },
+      screen: DictionaryScreen,
+    },
+    Gokyo: {
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => (
+          <Image
+            source={require('./images/tabbar-gokyo.png')}
+            style={[styles.icon, { tintColor }]}
+          />
+        ),
+        tabBarLabel: 'Gokyo',
+      },
+      screen: GokyoScreen,
+    },
+    Waza: {
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => (
+          <Image
+            source={require('./images/tabbar-waza.png')}
+            style={[styles.icon, { tintColor }]}
+          />
+        ),
+        tabBarLabel: 'Waza',
+      },
+      screen: WazaScreen,
+    },
+    Gi: {
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => (
+          <Image
+            source={require('./images/tabbar-gi.png')}
+            style={[styles.icon, { tintColor }]}
+          />
+        ),
+        tabBarLabel: 'Gi',
+      },
+      screen: GiScreen,
+    },
+    About: {
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => (
+          <Image
+            source={require('./images/tabbar-about.png')}
+            style={[styles.icon, { tintColor }]}
+          />
+        ),
+        tabBarLabel: 'About',
+      },
+      screen: AboutScreen,
+    },
+  },
+  {
+    tabBarOptions: {
+      activeTintColor: PRIMARY_COLOUR,
+    },
+  }
+)
+
+const AppNavigator = createStackNavigator(
+  {
+    MainNavigator: {
+      screen: MainNavigator,
+    },
+  },
+  {
+    headerMode: 'none',
+    navigationOptions: {
+      headerVisible: false,
+    },
+  }
+)
+
+const AppContainer = createAppContainer(AppNavigator)
+
+const App = (): React.ReactElement<{}> => {
+  useEffect(() => {
+    SplashScreen.hide()
+  }, [])
+
+  return <AppContainer />
+}
+
+export default App
