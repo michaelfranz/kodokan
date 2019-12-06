@@ -1,11 +1,12 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import withScreenLayout from '../common/withScreenLayout'
+import { H1 } from '../common/text'
 
 const GiScreen = (): React.ReactElement<{}> => {
   return (
     <View>
-      <Text>Gi</Text>
+      <H1>Gi</H1>
     </View>
   )
 }

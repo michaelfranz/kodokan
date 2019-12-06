@@ -2,12 +2,14 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { BACKGROUND_COLOUR } from '../theme/colours';
 
+const dismissKeyboard = require('react-native-dismiss-keyboard')
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: BACKGROUND_COLOUR,
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   }
 })
 
@@ -20,6 +22,7 @@ const withScreenLayout = <P extends {}>(
 ): React.FunctionComponent<Props> => {
 
   const Layout = (props): React.ReactElement<Props & P> => {
+    dismissKeyboard();
     return (
       <View style={styles.container}>
         <WrappedComponent {...props} />
