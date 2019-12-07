@@ -1,2 +1,3 @@
-export const BACKGROUND_COLOUR = '#d6d5d5'
-export const PRIMARY_COLOUR = '#ea4025'
+export const BACKGROUND_COLOUR = 'rgb(212, 212, 212)'
+export const FOREGROUND_COLOUR = 'rgb(22, 18, 20)'
+export const PRIMARY_COLOUR = 'rgb(234, 64, 37)'

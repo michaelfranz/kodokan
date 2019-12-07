@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   backgroundImageContainer: {
-    backgroundColor: '#d4d4d4',
     flex: 2,
   },
   backgroundImage: {
