@@ -10,6 +10,7 @@ import WazaScreen from './waza/index'
 import GokyoScreen from './gokyo/index'
 import GiScreen from './gi/index'
 import AboutScreen from './about/index'
+import { FONT_FAMILY_SUBHEADING } from './theme/type'
 
 const styles = StyleSheet.create({
   icon: {
@@ -84,6 +85,9 @@ const MainNavigator = createBottomTabNavigator(
   {
     tabBarOptions: {
       activeTintColor: PRIMARY_COLOUR,
+      labelStyle: {
+        fontFamily: FONT_FAMILY_SUBHEADING,
+      },
     },
   }
 )
