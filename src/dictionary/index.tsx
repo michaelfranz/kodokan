@@ -62,6 +62,9 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
   const [bookmarkDisplayMode, setBookmarkDisplayMode] = useState(false)
 
   const onChangeText = (value: string) => {
+    if (value.trim().length) {
+      setBookmarkDisplayMode(false)
+    }
     setSearchText(value)
   }
 
