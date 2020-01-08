@@ -69,6 +69,9 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
   }
 
   const toggleBookmarkDisplay = () => {
+    if (!bookmarkDisplayMode) {
+      setSearchText('')
+    }
     setBookmarkDisplayMode(!bookmarkDisplayMode)
   }
 
