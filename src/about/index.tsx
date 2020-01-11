@@ -5,11 +5,9 @@ import {
   default as PurchaseManager,
   VIDEO_PRODUCT,
 } from '../purchase/PurchaseManager'
-import withScreenLayout from '../common/withScreenLayout'
+import withScreenLayout, { Props } from '../common/withScreenLayout'
 import { H1, H3, Text, HyperLink } from '../common/text'
 import { strings } from '../locales/i18n'
-import { Props } from '../common/withScreenLayout'
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

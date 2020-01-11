@@ -4,7 +4,7 @@ import { FONT_FAMILY_SUBHEADING, FONT_FAMILY_BASE } from '../theme/type'
 import { FONT_FAMILY_HEADING } from '../theme/type'
 import { PRIMARY_COLOUR, FOREGROUND_COLOUR } from '../theme/colours'
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   heading: {
     fontFamily: FONT_FAMILY_HEADING,
     letterSpacing: -1,
