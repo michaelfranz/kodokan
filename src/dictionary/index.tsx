@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
+  FlatList,
 } from 'react-native'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
 import {
@@ -15,6 +16,8 @@ import { SearchBar } from 'react-native-elements'
 import { strings } from '../locales/i18n'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { styles as fontStyles, Text } from '../common/text'
+import ArticleInfo from '../data/ArticleInfo'
+import Article from '../data/Article'
 
 const BackgroundPortrait = require('../images/background1P.png')
 const BackgroundLandscape = require('../images/background1L.png')
@@ -53,13 +56,26 @@ const styles = StyleSheet.create({
   searchIconContainer: {
     padding: 0,
   },
+  articleList: {
+    backgroundColor: 'transparent',
+    flex: 1,
+  },
 })
 
 const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
   const isLandscape = orientation === 'landscape'
   const [searchText, setSearchText] = useState('')
+  const [articles, setArticles] = useState<Article[]>([])
   const hasSearchText = !!searchText.trim().length
   const [bookmarkDisplayMode, setBookmarkDisplayMode] = useState(false)
+
+  useEffect(() => {
+    if (hasSearchText) {
+      setArticles(ArticleInfo.articlesMatchingSearchTerm(searchText))
+    } else {
+      setArticles(ArticleInfo.allArticles())
+    }
+  }, [searchText])
 
   const onChangeText = (value: string) => {
     if (value.trim().length) {
@@ -114,6 +130,24 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
     )
   }
 
+  const keyExtractor = item => item.name
+
+  const renderArticle = ({ item }: { item: Article }): JSX.Element => {
+    return <Text>{item.name}</Text>
+  }
+
+  const renderList = (): JSX.Element => {
+    return (
+      <FlatList
+        style={styles.articleList}
+        data={articles}
+        renderItem={renderArticle}
+        keyExtractor={keyExtractor}
+        keyboardShouldPersistTaps={'always'}
+      />
+    )
+  }
+
   const renderBody = (): JSX.Element => {
     return (
       <View style={{ flex: 1 }}>
@@ -121,7 +155,7 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
         {!bookmarkDisplayMode && !hasSearchText && (
           <Text>Recents and Term of the Day</Text>
         )}
-        {hasSearchText && <Text>Search results list</Text>}
+        {hasSearchText && renderList()}
       </View>
     )
   }

@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/fuse": "2.5.2",
     "@react-native-community/async-storage": "1.6.3",
     "bluebird": "3.7.2",
     "react": "16.9.0",
@@ -28,7 +29,8 @@
     "react-native-vector-icons": "6.6.0",
     "react-navigation": "4.0.10",
     "react-navigation-stack": "1.10.3",
-    "react-navigation-tabs": "2.6.0"
+    "react-navigation-tabs": "2.6.0",
+    "fuse.js": "3.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.6.2",
