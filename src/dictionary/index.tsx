@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native'
+import Spinner from 'react-native-loading-spinner-overlay'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
 import {
   FOREGROUND_COLOUR_ALT,
@@ -18,10 +19,23 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { styles as fontStyles, Text } from '../common/text'
 import ArticleInfo from '../data/ArticleInfo'
 import Article from '../data/Article'
+import ArticleView from './ArticleView'
+import PurchaseHandler from '../purchase/PurchaseHandler'
+import { AUDIO_PRODUCT } from '../purchase/PurchaseManager'
+import TrackPlayer from 'react-native-track-player'
+import { articleAudio } from '../audio/ArticleMedia'
 
 const BackgroundPortrait = require('../images/background1P.png')
 const BackgroundLandscape = require('../images/background1L.png')
 const dismissKeyboard = require('react-native-dismiss-keyboard')
+
+export interface IBookmarker {
+  allBookmarks(): Promise<string[]>
+
+  isBookmarked(term: string): Promise<boolean>
+
+  toggleBookmark(term: string): Promise<boolean>
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -62,12 +76,20 @@ const styles = StyleSheet.create({
   },
 })
 
-const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
+const DictionaryScreen = ({
+  orientation,
+  navigation,
+}): React.ReactElement<Props> => {
   const isLandscape = orientation === 'landscape'
   const [searchText, setSearchText] = useState('')
+  const [displaySpinner, setDisplaySpinner] = useState<boolean>(false)
   const [articles, setArticles] = useState<Article[]>([])
   const hasSearchText = !!searchText.trim().length
   const [bookmarkDisplayMode, setBookmarkDisplayMode] = useState(false)
+
+  const longRunningOpCallback = (longOpIsRunning: boolean) => {
+    setDisplaySpinner(longOpIsRunning)
+  }
 
   useEffect(() => {
     if (hasSearchText) {
@@ -132,8 +154,46 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
 
   const keyExtractor = item => item.name
 
-  const renderArticle = ({ item }: { item: Article }): JSX.Element => {
-    return <Text>{item.name}</Text>
+  const playAudio = (name: string) => {
+    const audioURI = articleAudio[name]
+    console.log('aaaa', audioURI)
+    // TrackPlayer.reset() // stops whatever is currently playing, clears audio queue
+    // TrackPlayer.setupPlayer().then(async () => {
+    //   await TrackPlayer.add({
+    //     artist: 'KodokanPro',
+    //     id: name,
+    //     title: name,
+    //     url: audioURI,
+    //   })
+    //   TrackPlayer.play()
+    // })
+  }
+
+  const renderArticle = ({ item }: { item: Article }) => {
+    // const purchaseHandler = new PurchaseHandler(
+    //   AUDIO_PRODUCT,
+    //   (success: boolean) => {
+    //     setDisplaySpinner(false)
+    //     if (success) {
+    //       playAudio(item.name)
+    //     }
+    //     this.setState({ isSpinnerVisible: false }, () => {
+    //       if (success) {
+    //         this.playAudio(item.name)
+    //       }
+    //     })
+    //   },
+    //   longRunningOpCallback
+    // )
+
+    return (
+      <ArticleView
+        article={item}
+        // bookmarker={this}
+        onPress={() => playAudio(item.name)}
+        navigation={navigation}
+      />
+    )
   }
 
   const renderList = (): JSX.Element => {
@@ -162,6 +222,11 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
 
   return (
     <View style={styles.container}>
+      <Spinner
+        visible={displaySpinner}
+        textContent={'Contacting App Store...'}
+        textStyle={{ color: 'white' }}
+      />
       <ImageBackground
         source={isLandscape ? BackgroundLandscape : BackgroundPortrait}
         style={styles.backgroundImageContainer}
