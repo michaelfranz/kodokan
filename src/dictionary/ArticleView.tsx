@@ -43,7 +43,42 @@ const ArticleView = ({
   style,
   onPress,
   article,
+  navigation,
 }: IProps): React.ReactElement<IProps> => {
+  const showScreen = (screen: string, term: string) => {
+    const { navigate } = navigation
+    navigate(screen, { term })
+  }
+
+  const renderNaviButton = (
+    show: boolean,
+    screen: string,
+    term: string,
+    image
+  ) => {
+    return show ? (
+      <TouchableOpacity
+        style={{ paddingRight: 8 }}
+        onPress={() => showScreen(screen, term)}
+      >
+        <Image source={image} />
+      </TouchableOpacity>
+    ) : (
+      <Text />
+    )
+  }
+
+  const { isGokyo, isWaza, isWazaClassification, isGiTerm } = article
+
+  const gokyoButton = renderNaviButton(isGokyo, 'Gokyo', name, ImageDictGokyo)
+  const wazaButton = renderNaviButton(
+    isWaza || isWazaClassification,
+    'Waza',
+    name,
+    ImageDictWaza
+  )
+  const giButton = renderNaviButton(isGiTerm, 'Gi', name, ImageDictGi)
+
   return (
     <View
       style={[
@@ -74,7 +109,11 @@ const ArticleView = ({
           flexDirection: 'row',
           justifyContent: 'flex-end',
         }}
-      ></View>
+      >
+        {gokyoButton}
+        {wazaButton}
+        {giButton}
+      </View>
     </View>
   )
 }
