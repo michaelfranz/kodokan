@@ -4,7 +4,6 @@ import * as React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Article from '../data/Article'
-import { IBookmarker } from './index'
 import { FOREGROUND_COLOUR } from '../theme/colours'
 
 const ImageDictGokyo = require('../images/dict-gokyo.png')
@@ -46,6 +45,9 @@ const ArticleView = ({
   navigation,
 }: IProps): React.ReactElement<IProps> => {
   const showScreen = (screen: string, term: string) => {
+    alert('no action for now')
+    return
+
     const { navigate } = navigation
     navigate(screen, { term })
   }
@@ -68,7 +70,7 @@ const ArticleView = ({
     )
   }
 
-  const { isGokyo, isWaza, isWazaClassification, isGiTerm } = article
+  const { isGokyo, isWaza, isWazaClassification, isGiTerm, name } = article
 
   const gokyoButton = renderNaviButton(isGokyo, 'Gokyo', name, ImageDictGokyo)
   const wazaButton = renderNaviButton(

@@ -5,6 +5,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
@@ -92,6 +93,14 @@ const DictionaryScreen = ({
   }
 
   useEffect(() => {
+    TrackPlayer.registerEventHandler(playerEventHandler)
+  }, [])
+
+  const playerEventHandler = async () => {
+    // Do nothing
+  }
+
+  useEffect(() => {
     if (hasSearchText) {
       setArticles(ArticleInfo.articlesMatchingSearchTerm(searchText))
     } else {
@@ -156,41 +165,46 @@ const DictionaryScreen = ({
 
   const playAudio = (name: string) => {
     const audioURI = articleAudio[name]
-    console.log('aaaa', audioURI)
-    // TrackPlayer.reset() // stops whatever is currently playing, clears audio queue
-    // TrackPlayer.setupPlayer().then(async () => {
-    //   await TrackPlayer.add({
-    //     artist: 'KodokanPro',
-    //     id: name,
-    //     title: name,
-    //     url: audioURI,
-    //   })
-    //   TrackPlayer.play()
-    // })
+
+    if (!audioURI) {
+      Alert.alert(
+        'Error',
+        `Audio file for ${name} not found`,
+        [{ text: 'OK', onPress: () => {} }],
+        { cancelable: false }
+      )
+      return
+    }
+
+    TrackPlayer.reset() // stops whatever is currently playing, clears audio queue
+    TrackPlayer.setupPlayer().then(async () => {
+      // Adds a track to the queue
+      await TrackPlayer.add({
+        id: name,
+        title: name,
+        url: audioURI,
+        artist: 'KodokanPro',
+      })
+      TrackPlayer.play()
+    })
   }
 
   const renderArticle = ({ item }: { item: Article }) => {
-    // const purchaseHandler = new PurchaseHandler(
-    //   AUDIO_PRODUCT,
-    //   (success: boolean) => {
-    //     setDisplaySpinner(false)
-    //     if (success) {
-    //       playAudio(item.name)
-    //     }
-    //     this.setState({ isSpinnerVisible: false }, () => {
-    //       if (success) {
-    //         this.playAudio(item.name)
-    //       }
-    //     })
-    //   },
-    //   longRunningOpCallback
-    // )
+    const purchaseHandler = new PurchaseHandler(
+      AUDIO_PRODUCT,
+      (success: boolean) => {
+        setDisplaySpinner(false)
+        if (success) {
+          playAudio(item.name)
+        }
+      },
+      longRunningOpCallback
+    )
 
     return (
       <ArticleView
         article={item}
-        // bookmarker={this}
-        onPress={() => playAudio(item.name)}
+        onPress={() => purchaseHandler.conditionalPlay()}
         navigation={navigation}
       />
     )
