@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
+  FlatList,
+  Alert,
+  SafeAreaView,
 } from 'react-native'
+import Spinner from 'react-native-loading-spinner-overlay'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
 import {
   FOREGROUND_COLOUR_ALT,
@@ -15,18 +19,33 @@ import { SearchBar } from 'react-native-elements'
 import { strings } from '../locales/i18n'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { styles as fontStyles, Text } from '../common/text'
+import ArticleInfo from '../data/ArticleInfo'
+import Article from '../data/Article'
+import ArticleView from './ArticleView'
+import PurchaseHandler from '../purchase/PurchaseHandler'
+import { AUDIO_PRODUCT } from '../purchase/PurchaseManager'
+import TrackPlayer from 'react-native-track-player'
+import { articleAudio } from '../audio/ArticleMedia'
 
 const BackgroundPortrait = require('../images/background1P.png')
 const BackgroundLandscape = require('../images/background1L.png')
 const dismissKeyboard = require('react-native-dismiss-keyboard')
 
+export interface IBookmarker {
+  allBookmarks(): Promise<string[]>
+
+  isBookmarked(term: string): Promise<boolean>
+
+  toggleBookmark(term: string): Promise<boolean>
+}
+
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     flex: 1,
   },
   backgroundImageContainer: {
-    flex: 2,
+    flex: 1,
+    flexDirection: 'row',
   },
   backgroundImage: {
     alignContent: 'center',
@@ -53,13 +72,48 @@ const styles = StyleSheet.create({
   searchIconContainer: {
     padding: 0,
   },
+  articleList: {
+    backgroundColor: 'transparent',
+    flex: 1,
+  },
 })
 
-const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
+const DictionaryScreen = ({
+  orientation,
+  navigation,
+}): React.ReactElement<Props> => {
   const isLandscape = orientation === 'landscape'
   const [searchText, setSearchText] = useState('')
+  const [displaySpinner, setDisplaySpinner] = useState<boolean>(false)
+  const [articles, setArticles] = useState<Article[]>([])
   const hasSearchText = !!searchText.trim().length
   const [bookmarkDisplayMode, setBookmarkDisplayMode] = useState(false)
+
+  const longRunningOpCallback = (longOpIsRunning: boolean) => {
+    setDisplaySpinner(longOpIsRunning)
+  }
+
+  useEffect(() => {
+    TrackPlayer.registerEventHandler(playerEventHandler)
+  }, [])
+
+  const filterArticlesWithoutAudio = (articles: Article[]) => {
+    return articles.filter(article => {
+      return articleAudio[article.name]
+    })
+  }
+
+  const playerEventHandler = async () => {
+    // Do nothing
+  }
+
+  useEffect(() => {
+    let articles = ArticleInfo.allArticles()
+    if (hasSearchText) {
+      articles = ArticleInfo.articlesMatchingSearchTerm(searchText)
+    }
+    setArticles(articles)
+  }, [searchText])
 
   const onChangeText = (value: string) => {
     if (value.trim().length) {
@@ -114,6 +168,67 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
     )
   }
 
+  const keyExtractor = item => item.name
+
+  const playAudio = (name: string) => {
+    const audioURI = articleAudio[name]
+
+    if (!audioURI) {
+      Alert.alert(
+        'Error',
+        `Audio file for ${name} not found`,
+        [{ text: 'OK', onPress: () => {} }],
+        { cancelable: false }
+      )
+      return
+    }
+
+    TrackPlayer.reset() // stops whatever is currently playing, clears audio queue
+    TrackPlayer.setupPlayer().then(async () => {
+      // Adds a track to the queue
+      await TrackPlayer.add({
+        id: name,
+        title: name,
+        url: audioURI,
+        artist: 'KodokanPro',
+      })
+      TrackPlayer.play()
+    })
+  }
+
+  const renderArticle = ({ item }: { item: Article }) => {
+    const purchaseHandler = new PurchaseHandler(
+      AUDIO_PRODUCT,
+      (success: boolean) => {
+        setDisplaySpinner(false)
+        if (success) {
+          playAudio(item.name)
+        }
+      },
+      longRunningOpCallback
+    )
+
+    return (
+      <ArticleView
+        article={item}
+        onPress={() => purchaseHandler.conditionalPlay()}
+        navigation={navigation}
+      />
+    )
+  }
+
+  const renderList = (): JSX.Element => {
+    return (
+      <FlatList
+        style={styles.articleList}
+        data={filterArticlesWithoutAudio(articles)}
+        renderItem={renderArticle}
+        keyExtractor={keyExtractor}
+        keyboardShouldPersistTaps={'always'}
+      />
+    )
+  }
+
   const renderBody = (): JSX.Element => {
     return (
       <View style={{ flex: 1 }}>
@@ -121,22 +236,27 @@ const DictionaryScreen = ({ orientation }): React.ReactElement<Props> => {
         {!bookmarkDisplayMode && !hasSearchText && (
           <Text>Recents and Term of the Day</Text>
         )}
-        {hasSearchText && <Text>Search results list</Text>}
+        {hasSearchText && renderList()}
       </View>
     )
   }
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={isLandscape ? BackgroundLandscape : BackgroundPortrait}
-        style={styles.backgroundImageContainer}
-        imageStyle={styles.backgroundImage}
-      >
+    <ImageBackground
+      source={isLandscape ? BackgroundLandscape : BackgroundPortrait}
+      style={styles.backgroundImageContainer}
+      imageStyle={styles.backgroundImage}
+    >
+      <SafeAreaView style={styles.container}>
+        <Spinner
+          visible={displaySpinner}
+          textContent={'Contacting App Store...'}
+          textStyle={{ color: 'white' }}
+        />
         {renderHeader()}
         {renderBody()}
-      </ImageBackground>
-    </View>
+      </SafeAreaView>
+    </ImageBackground>
   )
 }
 

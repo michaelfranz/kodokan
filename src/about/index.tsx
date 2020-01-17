@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, ImageBackground, StyleSheet } from 'react-native'
+import { View, ImageBackground, StyleSheet, SafeAreaView } from 'react-native'
 import {
   AUDIO_PRODUCT,
   default as PurchaseManager,
@@ -9,15 +9,15 @@ import withScreenLayout, { Props } from '../common/withScreenLayout'
 import { H1, H3, Text, HyperLink } from '../common/text'
 import { strings } from '../locales/i18n'
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    flex: 1,
-    paddingLeft: 6,
-    paddingRight: 6,
-    paddingTop: 20,
-  },
   backgroundImageContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  container: {
     flex: 2,
+    paddingTop: 20,
   },
   backgroundImage: {
     alignContent: 'center',
@@ -72,12 +72,12 @@ const AboutScreen = ({ orientation }): React.ReactElement<Props> => {
   const isLandscape = orientation === 'landscape'
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={Caio}
-        style={styles.backgroundImageContainer}
-        imageStyle={styles.backgroundImage}
-      >
+    <ImageBackground
+      source={Caio}
+      style={styles.backgroundImageContainer}
+      imageStyle={styles.backgroundImage}
+    >
+      <SafeAreaView style={styles.container}>
         <View
           style={{
             alignItems: isLandscape ? 'flex-start' : 'center',
@@ -146,8 +146,8 @@ const AboutScreen = ({ orientation }): React.ReactElement<Props> => {
             </View>
           </View>
         </View>
-      </ImageBackground>
-    </View>
+      </SafeAreaView>
+    </ImageBackground>
   )
 }
 
