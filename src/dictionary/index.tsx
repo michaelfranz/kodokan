@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  SafeAreaView,
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
@@ -40,11 +41,11 @@ export interface IBookmarker {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     flex: 1,
   },
   backgroundImageContainer: {
-    flex: 2,
+    flex: 1,
+    flexDirection: 'row',
   },
   backgroundImage: {
     alignContent: 'center',
@@ -235,21 +236,21 @@ const DictionaryScreen = ({
   }
 
   return (
-    <View style={styles.container}>
-      <Spinner
-        visible={displaySpinner}
-        textContent={'Contacting App Store...'}
-        textStyle={{ color: 'white' }}
-      />
-      <ImageBackground
-        source={isLandscape ? BackgroundLandscape : BackgroundPortrait}
-        style={styles.backgroundImageContainer}
-        imageStyle={styles.backgroundImage}
-      >
+    <ImageBackground
+      source={isLandscape ? BackgroundLandscape : BackgroundPortrait}
+      style={styles.backgroundImageContainer}
+      imageStyle={styles.backgroundImage}
+    >
+      <SafeAreaView style={styles.container}>
+        <Spinner
+          visible={displaySpinner}
+          textContent={'Contacting App Store...'}
+          textStyle={{ color: 'white' }}
+        />
         {renderHeader()}
         {renderBody()}
-      </ImageBackground>
-    </View>
+      </SafeAreaView>
+    </ImageBackground>
   )
 }
 
