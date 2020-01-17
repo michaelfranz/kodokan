@@ -97,16 +97,22 @@ const DictionaryScreen = ({
     TrackPlayer.registerEventHandler(playerEventHandler)
   }, [])
 
+  const filterArticlesWithoutAudio = (articles: Article[]) => {
+    return articles.filter(article => {
+      return articleAudio[article.name]
+    })
+  }
+
   const playerEventHandler = async () => {
     // Do nothing
   }
 
   useEffect(() => {
+    let articles = ArticleInfo.allArticles()
     if (hasSearchText) {
-      setArticles(ArticleInfo.articlesMatchingSearchTerm(searchText))
-    } else {
-      setArticles(ArticleInfo.allArticles())
+      articles = ArticleInfo.articlesMatchingSearchTerm(searchText)
     }
+    setArticles(articles)
   }, [searchText])
 
   const onChangeText = (value: string) => {
@@ -215,7 +221,7 @@ const DictionaryScreen = ({
     return (
       <FlatList
         style={styles.articleList}
-        data={articles}
+        data={filterArticlesWithoutAudio(articles)}
         renderItem={renderArticle}
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps={'always'}
