@@ -26,6 +26,7 @@ import PurchaseHandler from '../purchase/PurchaseHandler'
 import { AUDIO_PRODUCT } from '../purchase/PurchaseManager'
 import TrackPlayer from 'react-native-track-player'
 import { articleAudio } from '../audio/ArticleMedia'
+import BookmarkInfo from '../data/BookmarkInfo'
 
 const BackgroundPortrait = require('../images/background1P.png')
 const BackgroundLandscape = require('../images/background1L.png')
@@ -122,9 +123,13 @@ const DictionaryScreen = ({
     setSearchText(value)
   }
 
-  const toggleBookmarkDisplay = () => {
+  const toggleBookmarkDisplay = async () => {
     if (!bookmarkDisplayMode) {
       setSearchText('')
+      const bookmarkedArticles = ArticleInfo.articlesForTerms(
+        await BookmarkInfo.bookmarkTerms()
+      )
+      setArticles(bookmarkedArticles)
     }
     setBookmarkDisplayMode(!bookmarkDisplayMode)
   }
@@ -232,11 +237,10 @@ const DictionaryScreen = ({
   const renderBody = (): JSX.Element => {
     return (
       <View style={{ flex: 1 }}>
-        {bookmarkDisplayMode && !hasSearchText && <Text>Bookmarks</Text>}
         {!bookmarkDisplayMode && !hasSearchText && (
           <Text>Recents and Term of the Day</Text>
         )}
-        {hasSearchText && renderList()}
+        {(hasSearchText || bookmarkDisplayMode) && renderList()}
       </View>
     )
   }
