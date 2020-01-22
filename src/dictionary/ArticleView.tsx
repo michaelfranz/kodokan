@@ -1,14 +1,16 @@
 // noinspection TsLint
-import * as React from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Article from '../data/Article'
 import { FOREGROUND_COLOUR } from '../theme/colours'
+import BookmarkInfo from '../data/BookmarkInfo'
 
 const ImageDictGokyo = require('../images/dict-gokyo.png')
 const ImageDictWaza = require('../images/dict-waza.png')
 const ImageDictGi = require('../images/dict-gi.png')
+const dismissKeyboard = require('react-native-dismiss-keyboard')
 
 const styles = StyleSheet.create({
   techniqueContainer: {
@@ -36,6 +38,7 @@ export interface IProps {
   onPress: () => void
   navigation?: any
   style?: any
+  onBookmarkToggle: (isBookmarked: boolean) => void
 }
 
 const ArticleView = ({
@@ -43,14 +46,22 @@ const ArticleView = ({
   onPress,
   article,
   navigation,
+  onBookmarkToggle,
 }: IProps): React.ReactElement<IProps> => {
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
   const showScreen = (screen: string, term: string) => {
     alert('no action for now')
+    dismissKeyboard()
     return
 
     const { navigate } = navigation
     navigate(screen, { term })
   }
+
+  useEffect(() => {
+    const term = article.name
+    BookmarkInfo.isBookmarked(term).then(value => setIsBookmarked(value))
+  }, [])
 
   const renderNaviButton = (
     show: boolean,
@@ -70,6 +81,33 @@ const ArticleView = ({
     )
   }
 
+  const toggleBookmark = async () => {
+    const term = article.name
+    const isBookmarked = await BookmarkInfo.isBookmarked(term)
+    if (isBookmarked) {
+      await BookmarkInfo.removeBookmarkTerm(term)
+    } else {
+      await BookmarkInfo.addBookmarkTerm(term)
+    }
+    dismissKeyboard()
+    onBookmarkToggle(!isBookmarked)
+    setIsBookmarked(!isBookmarked)
+  }
+
+  const renderBookmarkButton = () => {
+    return (
+      <TouchableOpacity onPress={toggleBookmark}>
+        <Text style={{ margin: 8, fontSize: 15, textAlign: 'left' }}>
+          <Icon
+            name={isBookmarked ? 'bookmark' : 'bookmark-o'}
+            size={20}
+            color={FOREGROUND_COLOUR}
+          />
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+
   const { isGokyo, isWaza, isWazaClassification, isGiTerm, name } = article
 
   const gokyoButton = renderNaviButton(isGokyo, 'Gokyo', name, ImageDictGokyo)
@@ -80,6 +118,7 @@ const ArticleView = ({
     ImageDictWaza
   )
   const giButton = renderNaviButton(isGiTerm, 'Gi', name, ImageDictGi)
+  const bookmarkButton = renderBookmarkButton()
 
   return (
     <View
@@ -115,6 +154,7 @@ const ArticleView = ({
         {gokyoButton}
         {wazaButton}
         {giButton}
+        {bookmarkButton}
       </View>
     </View>
   )

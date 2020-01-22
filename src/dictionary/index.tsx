@@ -95,8 +95,22 @@ const DictionaryScreen = ({
   }
 
   useEffect(() => {
+    if (bookmarkDisplayMode) {
+      displayBookmarkedArticles()
+      setSearchText('')
+    }
+  }, [bookmarkDisplayMode])
+
+  useEffect(() => {
     TrackPlayer.registerEventHandler(playerEventHandler)
   }, [])
+
+  const displayBookmarkedArticles = async () => {
+    const bookmarkedArticles = ArticleInfo.articlesForTerms(
+      await BookmarkInfo.bookmarkTerms()
+    )
+    setArticles(bookmarkedArticles)
+  }
 
   const filterArticlesWithoutAudio = (articles: Article[]) => {
     return articles.filter(article => {
@@ -124,13 +138,7 @@ const DictionaryScreen = ({
   }
 
   const toggleBookmarkDisplay = async () => {
-    if (!bookmarkDisplayMode) {
-      setSearchText('')
-      const bookmarkedArticles = ArticleInfo.articlesForTerms(
-        await BookmarkInfo.bookmarkTerms()
-      )
-      setArticles(bookmarkedArticles)
-    }
+    dismissKeyboard()
     setBookmarkDisplayMode(!bookmarkDisplayMode)
   }
 
@@ -218,6 +226,11 @@ const DictionaryScreen = ({
         article={item}
         onPress={() => purchaseHandler.conditionalPlay()}
         navigation={navigation}
+        onBookmarkToggle={isBookmarked => {
+          if (!isBookmarked && bookmarkDisplayMode) {
+            displayBookmarkedArticles()
+          }
+        }}
       />
     )
   }
