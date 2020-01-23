@@ -18,7 +18,7 @@ import {
 import { SearchBar } from 'react-native-elements'
 import { strings } from '../locales/i18n'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { styles as fontStyles, Text } from '../common/text'
+import { styles as fontStyles, Text, H1 } from '../common/text'
 import ArticleInfo from '../data/ArticleInfo'
 import Article from '../data/Article'
 import ArticleView from './ArticleView'
@@ -26,6 +26,7 @@ import PurchaseHandler from '../purchase/PurchaseHandler'
 import { AUDIO_PRODUCT } from '../purchase/PurchaseManager'
 import TrackPlayer from 'react-native-track-player'
 import { articleAudio } from '../audio/ArticleMedia'
+import BookmarkInfo from '../data/BookmarkInfo'
 
 const BackgroundPortrait = require('../images/background1P.png')
 const BackgroundLandscape = require('../images/background1L.png')
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     alignContent: 'center',
-    opacity: 0.5,
+    opacity: 0.35,
     resizeMode: 'cover',
   },
   headerContainer: {
@@ -78,24 +79,40 @@ const styles = StyleSheet.create({
   },
 })
 
+export interface IDictionaryState {
+  searchText: string
+  articles: Article[]
+  bookmarkDisplayMode: boolean
+  displaySpinner: boolean
+}
+
 const DictionaryScreen = ({
   orientation,
   navigation,
 }): React.ReactElement<Props> => {
   const isLandscape = orientation === 'landscape'
-  const [searchText, setSearchText] = useState('')
-  const [displaySpinner, setDisplaySpinner] = useState<boolean>(false)
-  const [articles, setArticles] = useState<Article[]>([])
-  const hasSearchText = !!searchText.trim().length
-  const [bookmarkDisplayMode, setBookmarkDisplayMode] = useState(false)
+  const [dictionaryState, setDictionaryState] = useState<IDictionaryState>({
+    searchText: '',
+    displaySpinner: false,
+    articles: [],
+    bookmarkDisplayMode: false,
+  })
+  const hasSearchText = !!dictionaryState.searchText.trim().length
 
   const longRunningOpCallback = (longOpIsRunning: boolean) => {
-    setDisplaySpinner(longOpIsRunning)
+    setDictionaryState({ ...dictionaryState, displaySpinner: longOpIsRunning })
   }
 
   useEffect(() => {
     TrackPlayer.registerEventHandler(playerEventHandler)
   }, [])
+
+  const displayBookmarkedArticles = async () => {
+    const bookmarkedArticles = ArticleInfo.articlesForTerms(
+      await BookmarkInfo.bookmarkTerms()
+    )
+    setDictionaryState({ ...dictionaryState, articles: bookmarkedArticles })
+  }
 
   const filterArticlesWithoutAudio = (articles: Article[]) => {
     return articles.filter(article => {
@@ -108,25 +125,44 @@ const DictionaryScreen = ({
   }
 
   useEffect(() => {
-    let articles = ArticleInfo.allArticles()
-    if (hasSearchText) {
-      articles = ArticleInfo.articlesMatchingSearchTerm(searchText)
+    if (dictionaryState.bookmarkDisplayMode) {
+      return
     }
-    setArticles(articles)
-  }, [searchText])
+    let articles: Article[] = []
+    if (hasSearchText) {
+      articles = ArticleInfo.articlesMatchingSearchTerm(
+        dictionaryState.searchText
+      )
+    }
+    setDictionaryState({ ...dictionaryState, articles })
+  }, [dictionaryState.searchText])
 
   const onChangeText = (value: string) => {
-    if (value.trim().length) {
-      setBookmarkDisplayMode(false)
-    }
-    setSearchText(value)
+    setDictionaryState({
+      ...dictionaryState,
+      bookmarkDisplayMode: dictionaryState.bookmarkDisplayMode
+        ? false
+        : dictionaryState.bookmarkDisplayMode,
+      searchText: value,
+    })
   }
 
-  const toggleBookmarkDisplay = () => {
-    if (!bookmarkDisplayMode) {
-      setSearchText('')
+  const toggleBookmarkDisplay = async () => {
+    const nextState = {
+      ...dictionaryState,
+      bookmarkDisplayMode: !dictionaryState.bookmarkDisplayMode,
     }
-    setBookmarkDisplayMode(!bookmarkDisplayMode)
+    if (!dictionaryState.bookmarkDisplayMode) {
+      const bookmarkedArticles = ArticleInfo.articlesForTerms(
+        await BookmarkInfo.bookmarkTerms()
+      )
+      nextState.articles = bookmarkedArticles
+      nextState.searchText = ''
+    } else {
+      nextState.articles = []
+    }
+    setDictionaryState({ ...nextState })
+    dismissKeyboard()
   }
 
   const renderHeader = (): JSX.Element => {
@@ -153,13 +189,18 @@ const DictionaryScreen = ({
             onChangeText('')
             dismissKeyboard()
           }}
-          value={searchText}
+          onCancel={() => {
+            dismissKeyboard()
+          }}
+          value={dictionaryState.searchText}
           showCancel={false}
         />
 
         <TouchableOpacity onPress={toggleBookmarkDisplay}>
           <Icon
-            name={bookmarkDisplayMode ? 'bookmark' : 'bookmark-o'}
+            name={
+              dictionaryState.bookmarkDisplayMode ? 'bookmark' : 'bookmark-o'
+            }
             size={28}
             color={FOREGROUND_COLOUR}
           />
@@ -200,7 +241,10 @@ const DictionaryScreen = ({
     const purchaseHandler = new PurchaseHandler(
       AUDIO_PRODUCT,
       (success: boolean) => {
-        setDisplaySpinner(false)
+        setDictionaryState({
+          ...dictionaryState,
+          displaySpinner: false,
+        })
         if (success) {
           playAudio(item.name)
         }
@@ -211,8 +255,13 @@ const DictionaryScreen = ({
     return (
       <ArticleView
         article={item}
-        onPress={() => purchaseHandler.conditionalPlay()}
+        onPress={() => {}}
         navigation={navigation}
+        onBookmarkToggle={isBookmarked => {
+          if (!isBookmarked && dictionaryState.bookmarkDisplayMode) {
+            displayBookmarkedArticles()
+          }
+        }}
       />
     )
   }
@@ -221,10 +270,26 @@ const DictionaryScreen = ({
     return (
       <FlatList
         style={styles.articleList}
-        data={filterArticlesWithoutAudio(articles)}
+        data={filterArticlesWithoutAudio(dictionaryState.articles)}
         renderItem={renderArticle}
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps={'always'}
+        ListEmptyComponent={() => {
+          if (!dictionaryState.bookmarkDisplayMode) {
+            return null
+          }
+          return (
+            <Text
+              style={{
+                margin: 10,
+              }}
+            >
+              No bookmarked terms. Add one by pressing{' '}
+              <Icon name="bookmark-o" size={14} color={FOREGROUND_COLOUR} /> on
+              the right side of the term.
+            </Text>
+          )
+        }}
       />
     )
   }
@@ -232,11 +297,20 @@ const DictionaryScreen = ({
   const renderBody = (): JSX.Element => {
     return (
       <View style={{ flex: 1 }}>
-        {bookmarkDisplayMode && !hasSearchText && <Text>Bookmarks</Text>}
-        {!bookmarkDisplayMode && !hasSearchText && (
+        {!dictionaryState.bookmarkDisplayMode && !hasSearchText && (
           <Text>Recents and Term of the Day</Text>
         )}
-        {hasSearchText && renderList()}
+        {dictionaryState.bookmarkDisplayMode && (
+          <H1
+            style={{
+              paddingLeft: 15,
+              marginBottom: 10,
+            }}
+          >
+            Bookmarks
+          </H1>
+        )}
+        {(hasSearchText || dictionaryState.bookmarkDisplayMode) && renderList()}
       </View>
     )
   }
@@ -249,7 +323,7 @@ const DictionaryScreen = ({
     >
       <SafeAreaView style={styles.container}>
         <Spinner
-          visible={displaySpinner}
+          visible={dictionaryState.displaySpinner}
           textContent={'Contacting App Store...'}
           textStyle={{ color: 'white' }}
         />

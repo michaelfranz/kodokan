@@ -1,14 +1,18 @@
 // noinspection TsLint
-import * as React from 'react'
+import React, { useState, useEffect } from 'react'
 
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Article from '../data/Article'
 import { FOREGROUND_COLOUR } from '../theme/colours'
+import BookmarkInfo from '../data/BookmarkInfo'
+import useIsMounted from 'ismounted'
+import { Text, H2 } from '../common/text'
 
 const ImageDictGokyo = require('../images/dict-gokyo.png')
 const ImageDictWaza = require('../images/dict-waza.png')
 const ImageDictGi = require('../images/dict-gi.png')
+const dismissKeyboard = require('react-native-dismiss-keyboard')
 
 const styles = StyleSheet.create({
   techniqueContainer: {
@@ -21,12 +25,10 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
   techniqueNameText: {
-    fontFamily: 'AmericanTypewriter',
     fontSize: 18,
     fontWeight: 'bold',
   },
   translationText: {
-    fontFamily: 'AmericanTypewriter',
     fontSize: 14,
   },
 })
@@ -36,6 +38,7 @@ export interface IProps {
   onPress: () => void
   navigation?: any
   style?: any
+  onBookmarkToggle: (isBookmarked: boolean) => void
 }
 
 const ArticleView = ({
@@ -43,14 +46,27 @@ const ArticleView = ({
   onPress,
   article,
   navigation,
+  onBookmarkToggle,
 }: IProps): React.ReactElement<IProps> => {
+  const isMounted = useIsMounted()
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
   const showScreen = (screen: string, term: string) => {
     alert('no action for now')
+    dismissKeyboard()
     return
 
     const { navigate } = navigation
     navigate(screen, { term })
   }
+
+  useEffect(() => {
+    const term = article.name
+    BookmarkInfo.isBookmarked(term).then(value => {
+      if (isMounted) {
+        setIsBookmarked(value)
+      }
+    })
+  }, [])
 
   const renderNaviButton = (
     show: boolean,
@@ -70,6 +86,33 @@ const ArticleView = ({
     )
   }
 
+  const toggleBookmark = async () => {
+    const term = article.name
+    const isBookmarked = await BookmarkInfo.isBookmarked(term)
+    if (isBookmarked) {
+      await BookmarkInfo.removeBookmarkTerm(term)
+    } else {
+      await BookmarkInfo.addBookmarkTerm(term)
+    }
+    dismissKeyboard()
+    onBookmarkToggle(!isBookmarked)
+    setIsBookmarked(!isBookmarked)
+  }
+
+  const renderBookmarkButton = () => {
+    return (
+      <TouchableOpacity onPress={toggleBookmark}>
+        <Text style={{ margin: 8, fontSize: 15, textAlign: 'left' }}>
+          <Icon
+            name={isBookmarked ? 'bookmark' : 'bookmark-o'}
+            size={20}
+            color={FOREGROUND_COLOUR}
+          />
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+
   const { isGokyo, isWaza, isWazaClassification, isGiTerm, name } = article
 
   const gokyoButton = renderNaviButton(isGokyo, 'Gokyo', name, ImageDictGokyo)
@@ -80,6 +123,7 @@ const ArticleView = ({
     ImageDictWaza
   )
   const giButton = renderNaviButton(isGiTerm, 'Gi', name, ImageDictGi)
+  const bookmarkButton = renderBookmarkButton()
 
   return (
     <View
@@ -100,7 +144,7 @@ const ArticleView = ({
       >
         <Icon name="volume-up" size={28} color={FOREGROUND_COLOUR} />
         <View style={{ paddingLeft: 4 }}>
-          <Text style={styles.techniqueNameText}>{article.displayName}</Text>
+          <H2 style={styles.techniqueNameText}>{article.displayName}</H2>
           <Text style={styles.translationText}>{article.translation}</Text>
         </View>
       </TouchableOpacity>
@@ -115,6 +159,7 @@ const ArticleView = ({
         {gokyoButton}
         {wazaButton}
         {giButton}
+        {bookmarkButton}
       </View>
     </View>
   )

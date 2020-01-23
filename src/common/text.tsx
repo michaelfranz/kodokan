@@ -23,8 +23,8 @@ export const styles = StyleSheet.create({
 })
 
 export interface Props {
-  children: ReactNode;
-  style?: TextStyle;
+  children?: ReactNode
+  style?: TextStyle
 }
 
 export const H1: React.FunctionComponent<Props> = ({ children, style }) => {
@@ -53,7 +53,7 @@ export const H3: React.FunctionComponent<Props> = ({ children, style }) => {
 
 export const Text: React.FunctionComponent<Props> = ({ children, style }) => {
   return (
-    <RNText style={[styles.baseText, { fontSize: 12 }, style]}>
+    <RNText style={[styles.baseText, { fontSize: 13 }, style]}>
       {children}
     </RNText>
   )
