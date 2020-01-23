@@ -18,7 +18,7 @@ import {
 import { SearchBar } from 'react-native-elements'
 import { strings } from '../locales/i18n'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { styles as fontStyles, Text } from '../common/text'
+import { styles as fontStyles, Text, H1 } from '../common/text'
 import ArticleInfo from '../data/ArticleInfo'
 import Article from '../data/Article'
 import ArticleView from './ArticleView'
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     alignContent: 'center',
-    opacity: 0.5,
+    opacity: 0.35,
     resizeMode: 'cover',
   },
   headerContainer: {
@@ -243,6 +243,22 @@ const DictionaryScreen = ({
         renderItem={renderArticle}
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps={'always'}
+        ListEmptyComponent={() => {
+          if (!bookmarkDisplayMode) {
+            return null
+          }
+          return (
+            <Text
+              style={{
+                margin: 10,
+              }}
+            >
+              No bookmarked terms. Add one by pressing{' '}
+              <Icon name="bookmark-o" size={14} color={FOREGROUND_COLOUR} /> on
+              the right side of the term.
+            </Text>
+          )
+        }}
       />
     )
   }
@@ -252,6 +268,16 @@ const DictionaryScreen = ({
       <View style={{ flex: 1 }}>
         {!bookmarkDisplayMode && !hasSearchText && (
           <Text>Recents and Term of the Day</Text>
+        )}
+        {bookmarkDisplayMode && (
+          <H1
+            style={{
+              paddingLeft: 15,
+              marginBottom: 10,
+            }}
+          >
+            Bookmarks
+          </H1>
         )}
         {(hasSearchText || bookmarkDisplayMode) && renderList()}
       </View>

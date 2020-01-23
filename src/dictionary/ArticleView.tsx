@@ -1,11 +1,13 @@
 // noinspection TsLint
 import React, { useState, useEffect } from 'react'
 
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Article from '../data/Article'
 import { FOREGROUND_COLOUR } from '../theme/colours'
 import BookmarkInfo from '../data/BookmarkInfo'
+import useIsMounted from 'ismounted'
+import { Text, H2 } from '../common/text'
 
 const ImageDictGokyo = require('../images/dict-gokyo.png')
 const ImageDictWaza = require('../images/dict-waza.png')
@@ -23,12 +25,10 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
   techniqueNameText: {
-    fontFamily: 'AmericanTypewriter',
     fontSize: 18,
     fontWeight: 'bold',
   },
   translationText: {
-    fontFamily: 'AmericanTypewriter',
     fontSize: 14,
   },
 })
@@ -48,6 +48,7 @@ const ArticleView = ({
   navigation,
   onBookmarkToggle,
 }: IProps): React.ReactElement<IProps> => {
+  const isMounted = useIsMounted()
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
   const showScreen = (screen: string, term: string) => {
     alert('no action for now')
@@ -60,7 +61,11 @@ const ArticleView = ({
 
   useEffect(() => {
     const term = article.name
-    BookmarkInfo.isBookmarked(term).then(value => setIsBookmarked(value))
+    BookmarkInfo.isBookmarked(term).then(value => {
+      if (isMounted) {
+        setIsBookmarked(value)
+      }
+    })
   }, [])
 
   const renderNaviButton = (
@@ -139,7 +144,7 @@ const ArticleView = ({
       >
         <Icon name="volume-up" size={28} color={FOREGROUND_COLOUR} />
         <View style={{ paddingLeft: 4 }}>
-          <Text style={styles.techniqueNameText}>{article.displayName}</Text>
+          <H2 style={styles.techniqueNameText}>{article.displayName}</H2>
           <Text style={styles.translationText}>{article.translation}</Text>
         </View>
       </TouchableOpacity>
