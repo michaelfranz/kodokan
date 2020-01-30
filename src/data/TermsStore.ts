@@ -34,10 +34,13 @@ export default class TermsStore {
     if (pastTerms.length && pastTerms[0].date === today) {
       return ArticleInfo.articleForTerm(pastTerms[0].name)
     }
+
+    const recentTerms = await TermsStore.recentTerms()
     const termsToExclude = pastTerms.map(term => term.name)
-    const articlesExcludingPastTerms = ArticleInfo.allArticlesExcept(
-      termsToExclude
-    )
+    const articlesExcludingPastTerms = ArticleInfo.allArticlesExcept([
+      ...termsToExclude,
+      ...recentTerms,
+    ])
     const termOfTheDay = ArticleInfo.randomArticleFromArticles(
       articlesExcludingPastTerms
     )
