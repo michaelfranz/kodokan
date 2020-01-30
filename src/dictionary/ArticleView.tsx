@@ -8,7 +8,6 @@ import { FOREGROUND_COLOUR } from '../theme/colours'
 import BookmarkInfo from '../data/BookmarkInfo'
 import useIsMounted from 'ismounted'
 import { Text, H2 } from '../common/text'
-import TermsStore from '../data/TermsStore'
 
 const ImageDictGokyo = require('../images/dict-gokyo.png')
 const ImageDictWaza = require('../images/dict-waza.png')

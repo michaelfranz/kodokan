@@ -86,7 +86,8 @@ export interface IDictionaryState {
   articles: Article[]
   bookmarkDisplayMode: boolean
   displaySpinner: boolean
-  recentTerms: string[]
+  recentTerms: Article[]
+  termOfTheDay: Article | undefined
 }
 
 const DictionaryScreen = ({
@@ -100,6 +101,7 @@ const DictionaryScreen = ({
     articles: [],
     bookmarkDisplayMode: false,
     recentTerms: [],
+    termOfTheDay: undefined,
   })
   const hasSearchText = !!dictionaryState.searchText.trim().length
 
@@ -109,15 +111,28 @@ const DictionaryScreen = ({
 
   useEffect(() => {
     TrackPlayer.registerEventHandler(playerEventHandler)
-    loadRecentTerms()
+    initRecentAndTermOfTheDay()
   }, [])
 
-  const loadRecentTerms = async () => {
+  const initRecentAndTermOfTheDay = async () => {
+    const termOfTheDay = await TermsStore.termOfTheDay()
     const recentTerms = await TermsStore.recentTerms()
+    const recentTermsWithArticles = ArticleInfo.articlesForTerms(recentTerms)
     setDictionaryState({
       ...dictionaryState,
       displaySpinner: false,
-      recentTerms,
+      termOfTheDay,
+      recentTerms: recentTermsWithArticles,
+    })
+  }
+
+  const loadRecentTerms = async () => {
+    const recentTerms = await TermsStore.recentTerms()
+    const recentTermsWithArticles = ArticleInfo.articlesForTerms(recentTerms)
+    setDictionaryState({
+      ...dictionaryState,
+      displaySpinner: false,
+      recentTerms: recentTermsWithArticles,
     })
   }
 
@@ -251,7 +266,15 @@ const DictionaryScreen = ({
     })
   }
 
-  const renderArticle = ({ item }: { item: Article }) => {
+  const renderArticle = ({
+    item,
+    addToRecentsOnPlay,
+    noBorder,
+  }: {
+    item: Article
+    addToRecentsOnPlay?: boolean
+    noBorder?: boolean
+  }) => {
     const purchaseHandler = new PurchaseHandler(
       AUDIO_PRODUCT,
       async (success: boolean) => {
@@ -260,7 +283,9 @@ const DictionaryScreen = ({
           displaySpinner: false,
         })
         if (success) {
-          await TermsStore.addTermToRecent(item.name)
+          if (addToRecentsOnPlay) {
+            await TermsStore.addTermToRecent(item.name)
+          }
           loadRecentTerms()
           playAudio(item.name)
         }
@@ -278,6 +303,7 @@ const DictionaryScreen = ({
             displayBookmarkedArticles()
           }
         }}
+        style={noBorder && { borderBottomWidth: 0 }}
       />
     )
   }
@@ -287,7 +313,9 @@ const DictionaryScreen = ({
       <FlatList
         style={styles.articleList}
         data={filterArticlesWithoutAudio(dictionaryState.articles)}
-        renderItem={renderArticle}
+        renderItem={({ item }) =>
+          renderArticle({ item, addToRecentsOnPlay: true })
+        }
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps={'always'}
         ListEmptyComponent={() => {
@@ -314,7 +342,9 @@ const DictionaryScreen = ({
     const sections = [
       {
         title: 'Term of the Day',
-        data: [],
+        data: dictionaryState.termOfTheDay
+          ? [dictionaryState.termOfTheDay]
+          : [],
       },
       {
         title: 'Recent',
@@ -328,20 +358,21 @@ const DictionaryScreen = ({
           <SectionList
             sections={sections}
             keyExtractor={(item, index) => item + index}
-            style={{ paddingHorizontal: 10 }}
-            renderItem={({ item }) => {
-              return (
-                <View>
-                  <Text>{item}</Text>
-                </View>
-              )
+            renderItem={({ item, section }) => {
+              if (!item) {
+                return null
+              }
+              return renderArticle({
+                item,
+                noBorder: section.title !== 'Recent',
+              })
             }}
             renderSectionHeader={({ section }) => {
               const { title } = section
-              if (section.title === 'Recent' && !section.data.length) {
+              if (!section.data.length) {
                 return null
               }
-              return <H2>{title}</H2>
+              return <H2 style={{ marginHorizontal: 15 }}>{title}</H2>
             }}
           />
         )}
