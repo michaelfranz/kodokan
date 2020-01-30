@@ -22,8 +22,6 @@ export default class PurchaseHandler {
 
   public conditionalPlay() {
     this.purchaseManager.isPurchased().then(purchased => {
-      this.invokeSuccessCallback()
-      return
       if (purchased) {
         this.invokeSuccessCallback()
       } else {
