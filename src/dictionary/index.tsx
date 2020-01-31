@@ -7,6 +7,7 @@ import {
   FlatList,
   Alert,
   SafeAreaView,
+  SectionList,
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
@@ -18,7 +19,7 @@ import {
 import { SearchBar } from 'react-native-elements'
 import { strings } from '../locales/i18n'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { styles as fontStyles, Text, H1 } from '../common/text'
+import { styles as fontStyles, Text, H1, H2 } from '../common/text'
 import ArticleInfo from '../data/ArticleInfo'
 import Article from '../data/Article'
 import ArticleView from './ArticleView'
@@ -27,6 +28,7 @@ import { AUDIO_PRODUCT } from '../purchase/PurchaseManager'
 import TrackPlayer from 'react-native-track-player'
 import { articleAudio } from '../audio/ArticleMedia'
 import BookmarkInfo from '../data/BookmarkInfo'
+import TermsStore from '../data/TermsStore'
 
 const BackgroundPortrait = require('../images/background1P.png')
 const BackgroundLandscape = require('../images/background1L.png')
@@ -84,6 +86,8 @@ export interface IDictionaryState {
   articles: Article[]
   bookmarkDisplayMode: boolean
   displaySpinner: boolean
+  recentTerms: Article[]
+  termOfTheDay: Article | undefined
 }
 
 const DictionaryScreen = ({
@@ -96,6 +100,8 @@ const DictionaryScreen = ({
     displaySpinner: false,
     articles: [],
     bookmarkDisplayMode: false,
+    recentTerms: [],
+    termOfTheDay: undefined,
   })
   const hasSearchText = !!dictionaryState.searchText.trim().length
 
@@ -105,7 +111,30 @@ const DictionaryScreen = ({
 
   useEffect(() => {
     TrackPlayer.registerEventHandler(playerEventHandler)
+    initRecentAndTermOfTheDay()
   }, [])
+
+  const initRecentAndTermOfTheDay = async () => {
+    const termOfTheDay = await TermsStore.termOfTheDay()
+    const recentTerms = await TermsStore.recentTerms()
+    const recentTermsWithArticles = ArticleInfo.articlesForTerms(recentTerms)
+    setDictionaryState({
+      ...dictionaryState,
+      displaySpinner: false,
+      termOfTheDay,
+      recentTerms: recentTermsWithArticles,
+    })
+  }
+
+  const loadRecentTerms = async () => {
+    const recentTerms = await TermsStore.recentTerms()
+    const recentTermsWithArticles = ArticleInfo.articlesForTerms(recentTerms)
+    setDictionaryState({
+      ...dictionaryState,
+      displaySpinner: false,
+      recentTerms: recentTermsWithArticles,
+    })
+  }
 
   const displayBookmarkedArticles = async () => {
     const bookmarkedArticles = ArticleInfo.articlesForTerms(
@@ -237,15 +266,27 @@ const DictionaryScreen = ({
     })
   }
 
-  const renderArticle = ({ item }: { item: Article }) => {
+  const renderArticle = ({
+    item,
+    addToRecentsOnPlay,
+    noBorder,
+  }: {
+    item: Article
+    addToRecentsOnPlay?: boolean
+    noBorder?: boolean
+  }) => {
     const purchaseHandler = new PurchaseHandler(
       AUDIO_PRODUCT,
-      (success: boolean) => {
+      async (success: boolean) => {
         setDictionaryState({
           ...dictionaryState,
           displaySpinner: false,
         })
         if (success) {
+          if (addToRecentsOnPlay) {
+            await TermsStore.addTermToRecent(item.name)
+          }
+          loadRecentTerms()
           playAudio(item.name)
         }
       },
@@ -255,13 +296,14 @@ const DictionaryScreen = ({
     return (
       <ArticleView
         article={item}
-        onPress={() => {}}
+        onPress={() => purchaseHandler.conditionalPlay()}
         navigation={navigation}
         onBookmarkToggle={isBookmarked => {
           if (!isBookmarked && dictionaryState.bookmarkDisplayMode) {
             displayBookmarkedArticles()
           }
         }}
+        style={noBorder && { borderBottomWidth: 0 }}
       />
     )
   }
@@ -271,7 +313,9 @@ const DictionaryScreen = ({
       <FlatList
         style={styles.articleList}
         data={filterArticlesWithoutAudio(dictionaryState.articles)}
-        renderItem={renderArticle}
+        renderItem={({ item }) =>
+          renderArticle({ item, addToRecentsOnPlay: true })
+        }
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps={'always'}
         ListEmptyComponent={() => {
@@ -295,20 +339,52 @@ const DictionaryScreen = ({
   }
 
   const renderBody = (): JSX.Element => {
+    const sections = [
+      {
+        title: 'Term of the Day',
+        data: dictionaryState.termOfTheDay
+          ? [dictionaryState.termOfTheDay]
+          : [],
+      },
+      {
+        title: 'Recent',
+        data: dictionaryState.recentTerms,
+      },
+    ]
+
     return (
       <View style={{ flex: 1 }}>
         {!dictionaryState.bookmarkDisplayMode && !hasSearchText && (
-          <Text>Recents and Term of the Day</Text>
+          <SectionList
+            sections={sections}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item, section }) => {
+              if (!item) {
+                return null
+              }
+              return renderArticle({
+                item,
+                noBorder: section.title !== 'Recent',
+              })
+            }}
+            renderSectionHeader={({ section }) => {
+              const { title } = section
+              if (!section.data.length) {
+                return null
+              }
+              return <H2 style={{ marginHorizontal: 15 }}>{title}</H2>
+            }}
+          />
         )}
         {dictionaryState.bookmarkDisplayMode && (
-          <H1
+          <H2
             style={{
               paddingLeft: 15,
               marginBottom: 10,
             }}
           >
             Bookmarks
-          </H1>
+          </H2>
         )}
         {(hasSearchText || dictionaryState.bookmarkDisplayMode) && renderList()}
       </View>

@@ -6921,6 +6921,16 @@ export default class ArticleInfo {
     return articleList
   }
 
+  public static randomArticleFromArticles(articles): Article {
+    return articles[Math.floor(Math.random() * articles.length)]
+  }
+
+  public static allArticlesExcept(terms: string[]): Article[] {
+    return ArticleInfo.allArticles().filter(
+      article => terms.indexOf(article.name) === -1
+    )
+  }
+
   public static articleCount(): number {
     return articleList.length
   }
