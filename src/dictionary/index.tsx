@@ -377,14 +377,14 @@ const DictionaryScreen = ({
           />
         )}
         {dictionaryState.bookmarkDisplayMode && (
-          <H1
+          <H2
             style={{
               paddingLeft: 15,
               marginBottom: 10,
             }}
           >
             Bookmarks
-          </H1>
+          </H2>
         )}
         {(hasSearchText || dictionaryState.bookmarkDisplayMode) && renderList()}
       </View>
