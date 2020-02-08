@@ -10,6 +10,7 @@ import WazaScreen from './waza/index'
 import GokyoScreen from './gokyo/index'
 import GiScreen from './gi/index'
 import AboutScreen from './about/index'
+import WazaDetailScreen from './waza/DetailScreen'
 import { FONT_FAMILY_SUBHEADING } from './theme/type'
 
 const styles = StyleSheet.create({
@@ -96,6 +97,13 @@ const AppNavigator = createStackNavigator(
   {
     MainNavigator: {
       screen: MainNavigator,
+    },
+    WazaClassificationDetailScreen: {
+      navigationOptions: ({ navigation }) => ({
+        title: `${navigation.state.params.classification}`,
+      }),
+      path: 'wazaClassificationDetail/:waza',
+      screen: WazaDetailScreen,
     },
   },
   {

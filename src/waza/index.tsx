@@ -62,14 +62,23 @@ interface IState {
   selectedTechnique?: string
 }
 
-const WazaScreen = ({ orientation }): React.ReactElement<IProps> => {
+const WazaScreen = ({
+  orientation,
+  navigation,
+}): React.ReactElement<IProps> => {
   const isLandscape = orientation === 'landscape'
-  const [state] = useState<IState>({})
+  const [state, setState] = useState<IState>({})
 
   const techniqueInfo = TechniqueInfo.getInstance()
 
   const showDetails = (classification: string) => {
-    alert('no actions yet: ' + classification)
+    const { selectedTechnique } = state
+    const selectedTechniqueCopy = selectedTechnique
+    setState({ classification: undefined, selectedTechnique: undefined })
+    navigation.navigate('WazaClassificationDetailScreen', {
+      classification,
+      selectedTechnique: selectedTechniqueCopy,
+    })
   }
 
   const renderItem = ({ item }) => {
@@ -110,7 +119,7 @@ const WazaScreen = ({ orientation }): React.ReactElement<IProps> => {
             data={techniqueInfo.wazaClassifications()}
             renderItem={renderItem}
             keyExtractor={item => item}
-            // extraData={this.state}
+            extraData={state}
           />
         </View>
       </SafeAreaView>
