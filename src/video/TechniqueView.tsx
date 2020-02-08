@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, TouchableOpacity, StyleSheet, Alert } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native'
 import { videoMap } from '../data/VideoInfo'
 import { H3, Text } from '../common/text'
 import { strings } from '../locales/i18n'
@@ -72,7 +72,12 @@ const TechniqueView: React.FunctionComponent<IProps> = (
   }
 
   const renderThumbnail = techniqueName => {
-    return null
+    const video = videoMap.get(techniqueName)
+    if (!video) {
+      return null // should render placeholder image
+    }
+    const path = video.thumbnail as any
+    return <Image source={path} style={styles.thumbnailImage} />
   }
 
   const { techniqueName, translation, onPress, isSelected } = props
