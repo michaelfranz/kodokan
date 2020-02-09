@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { Text } from '../common/text'
 import Video from '../data/Video'
@@ -40,6 +40,22 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
 
   if (!video) {
     return <View />
+  }
+
+  useEffect(() => {
+    setStateFromProps()
+  }, [])
+
+  const setStateFromProps = () => {
+    if (!video) {
+      return
+    }
+    video.isDownloaded().then(isDownloaded => {
+      setState({
+        fileSize: video.size,
+        isDownloaded,
+      })
+    })
   }
 
   const onDownloadButtonPress = () => {
