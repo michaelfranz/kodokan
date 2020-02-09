@@ -3,14 +3,7 @@ import { View, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native'
 import { videoMap } from '../data/VideoInfo'
 import { H3, Text } from '../common/text'
 import { strings } from '../locales/i18n'
-
-export interface IProps {
-  techniqueName: string
-  displayName: string
-  isSelected: boolean
-  onPress: () => void
-  translation: string
-}
+import DownloadStatusButton from './DownloadStatusButton'
 
 const styles = StyleSheet.create({
   techniqueContainer: {
@@ -20,6 +13,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 41,
     justifyContent: 'flex-start',
+    marginHorizontal: 15,
   },
   thumbnailContainer: {
     paddingLeft: 1,
@@ -29,6 +23,14 @@ const styles = StyleSheet.create({
     width: 60,
   },
 })
+
+export interface IProps {
+  techniqueName: string
+  displayName: string
+  isSelected: boolean
+  onPress: () => void
+  translation: string
+}
 
 interface IState {
   downloadProgress?: (bytesWritten: number, contentLength: number) => void
@@ -46,6 +48,9 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     isDownloaded: false,
     isOnline: true,
   })
+
+  const { techniqueName, translation, onPress, isSelected } = props
+  const { isDownloaded, isOnline } = state
 
   useEffect(() => {
     setStateFromProps()
@@ -80,8 +85,6 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     return <Image source={path} style={styles.thumbnailImage} />
   }
 
-  const { techniqueName, translation, onPress, isSelected } = props
-  const { isDownloaded, isOnline } = state
   let onPressAction = onPress
   if (!isDownloaded && !isOnline) {
     onPressAction = noNetworkAction
@@ -108,7 +111,12 @@ const TechniqueView: React.FunctionComponent<IProps> = (
           flexDirection: 'row',
           justifyContent: 'flex-end',
         }}
-      ></View>
+      >
+        <DownloadStatusButton
+          isOnline={isOnline}
+          video={videoMap.get(techniqueName)}
+        />
+      </View>
     </TouchableOpacity>
   )
 }

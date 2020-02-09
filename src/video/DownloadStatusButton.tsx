@@ -1,219 +1,121 @@
-import * as React from 'react'
-import {Alert, Text, TouchableOpacity, View} from 'react-native'
-import FontAwesome, {Icons} from 'react-native-fontawesome'
-import * as Progress from 'react-native-progress'
+import React, { useState } from 'react'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { Text } from '../common/text'
 import Video from '../data/Video'
-import {strings} from '../locales/i18n'
+import { FOREGROUND_COLOUR, FOREGROUND_COLOUR_ALT } from '../theme/colours'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    paddingVertical: 2,
+    width: 32,
+  },
+  fileSize: {
+    fontSize: 8,
+    color: FOREGROUND_COLOUR,
+  },
+})
 
 interface IProps {
-    isOnline: boolean
-    video: Video
+  video: Video | undefined
+  isOnline: boolean
 }
 
 interface IState {
-    downloadProgress?: (bytesWritten: number, contentLength: number) => void
-    fileSize: number
-    isDownloaded: boolean
+  downloadProgress?: (bytesWritten: number, contentLength: number) => void
+  fileSize: number
+  isDownloaded: boolean
 }
 
-export default class DownloadStatusButton extends React.Component<IProps, IState> {
-    public constructor(props) {
-        super(props)
-        this.state = {
-            downloadProgress: undefined,
-            fileSize: 0,
-            isDownloaded: false,
-        }
-    }
+const DownloadStatusButton: React.FunctionComponent<IProps> = ({
+  video,
+  isOnline,
+}): React.ReactElement => {
+  const [state, setState] = useState<IState>({
+    downloadProgress: undefined,
+    fileSize: 0,
+    isDownloaded: false,
+  })
 
-    public componentDidMount() {
-        this.setStatusForProps(this.props)
-    }
+  if (!video) {
+    return <View />
+  }
 
-    public componentWillReceiveProps(nextProps) {
-        this.setStatusForProps(nextProps)
-    }
+  const onDownloadButtonPress = () => {
+    alert('no action yet')
+  }
 
-    public render() {
-        return (
-            <View
-                style={{
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(255,255,255,0.5)',
-                    borderColor: 'darkgrey',
-                    borderRadius: 6,
-                    borderWidth: 1,
-                    marginRight: 4,
-                    paddingBottom: 2,
-                    paddingTop: 2,
-                    width: 32,
-                }}
-            >
-                {this.renderProgressOrDownloadButton()}
-                {this.renderSizeElement()}
-            </View>
-        )
+  const renderProgressOrDownloadButton = () => {
+    const { downloadProgress } = state
+    if (downloadProgress) {
+      return renderProgressElement()
+    } else {
+      return (
+        <TouchableOpacity
+          style={{ alignItems: 'center' }}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          onPress={onDownloadButtonPress}
+        >
+          {renderButtonElement()}
+        </TouchableOpacity>
+      )
     }
+  }
 
-    private setStatusForProps(props) {
-        const {video} = props
-        video.isDownloaded().then(isDownloaded => {
-            this.setState({
-                fileSize: video.size,
-                isDownloaded,
-            })
-        })
-    }
+  const renderProgressElement = () => {
+    return null
+  }
 
-    private renderProgressOrDownloadButton() {
-        const {downloadProgress} = this.state
-        if (downloadProgress) {
-            return this.renderProgressElement()
-        } else {
-            return this.renderButtonElement()
-        }
+  const renderButtonElement = () => {
+    if (state.isDownloaded) {
+      return renderDownloadedElement()
+    } else if (isOnline) {
+      return renderOnlineNotDownloadedElement()
+    } else {
+      return renderOfflineNotDownloadedElement()
     }
+  }
 
-    private renderButtonElement() {
-        if (this.state.isDownloaded) {
-            return this.renderDownloadedElement()
-        } else if (this.props.isOnline) {
-            return this.renderOnlineNotDownloadedElement()
-        } else {
-            return this.renderOfflineNotDownloadedElement()
-        }
-    }
+  const renderDownloadedElement = () => {
+    return (
+      <Ionicons
+        name="md-checkmark-circle"
+        size={20}
+        color={FOREGROUND_COLOUR_ALT}
+      />
+    )
+  }
 
-    private renderDownloadedElement() {
-        return (
-            <TouchableOpacity
-                style={{alignItems: 'center'}}
-                hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
-                onPress={this.toggleDownloadStatus}
-            >
-                <Text style={{color: 'darkgrey', fontSize: 15, textAlign: 'center'}}>
-                    <FontAwesome>{Icons.check}</FontAwesome>
-                </Text>
-            </TouchableOpacity>
-        )
-    }
+  const renderOnlineNotDownloadedElement = () => {
+    return (
+      <Ionicons
+        name="ios-cloud-download"
+        size={20}
+        color={FOREGROUND_COLOUR_ALT}
+      />
+    )
+  }
 
-    private renderOnlineNotDownloadedElement() {
-        return (
-            <TouchableOpacity
-                style={{alignItems: 'center'}}
-                hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
-                onPress={this.toggleDownloadStatus}
-            >
-                <Text style={{color: 'darkgrey', fontSize: 15, textAlign: 'center'}}>
-                    <FontAwesome>{Icons.cloudDownload}</FontAwesome>
-                </Text>
-            </TouchableOpacity>
-        )
-    }
+  const renderOfflineNotDownloadedElement = () => {
+    return (
+      <Ionicons name="ios-warning" size={20} color={FOREGROUND_COLOUR_ALT} />
+    )
+  }
 
-    private renderOfflineNotDownloadedElement() {
-        return (
-            <View style={{alignItems: 'center'}}>
-                <Text style={{color: 'darkgrey', fontSize: 15, textAlign: 'center'}}>
-                    <FontAwesome>{Icons.exclamationTriangle}</FontAwesome>
-                </Text>
-            </View>
-        )
-    }
+  const renderFileSize = () => {
+    const { fileSize } = state
+    return (
+      <Text style={styles.fileSize}>{(fileSize / 1048576).toFixed(1)}MB</Text>
+    )
+  }
 
-    private renderSizeElement() {
-        const {fileSize} = this.state
-        return <Text style={{fontSize: 7, textAlign: 'center'}}>{(fileSize / 1048576).toFixed(1)}MB</Text>
-    }
-
-    private renderProgressElement() {
-        const {video} = this.props
-        const {fileSize} = this.state
-        return <Progress.Pie color={'rgba(122, 122, 122, 1)'} progress={fileSize / video.size} size={18} />
-    }
-
-    private toggleDownloadStatus = () => {
-        if (this.state.isDownloaded) {
-            this.handleRemoveVideo()
-        } else {
-            this.handleDownloadVideo()
-        }
-    }
-
-    private handleRemoveVideo() {
-        Alert.alert(strings('RemoveVideoTitle'), strings('RemoveVideoMessage'), [
-            {text: strings('RemoveVideoOK'), onPress: () => this.removeVideo()},
-            {text: strings('RemoveVideoCancel')},
-        ])
-    }
-
-    private removeVideo() {
-        const {video} = this.props
-        video
-            .removeDownload()
-            .then(() => {
-                this.updateDownloadState()
-            })
-            .catch(reason => {
-                console.warn(reason)
-                this.updateDownloadState()
-            })
-    }
-
-    private handleDownloadVideo() {
-        this.setState(
-            {
-                fileSize: 0,
-            },
-            () => {
-                const {video} = this.props
-                const progressCallback = (bytesDownloaded: number, fileSize: number) => {
-                    this.setState(
-                        {
-                            fileSize: bytesDownloaded,
-                        },
-                        () => {
-                            video.isDownloaded().then(result => {
-                                this.setState({
-                                    downloadProgress: result ? undefined : this.state.downloadProgress,
-                                    isDownloaded: result,
-                                })
-                            })
-                        }
-                    )
-                }
-                this.setState(
-                    {
-                        downloadProgress: progressCallback,
-                    },
-                    () => {
-                        video
-                            .download(progressCallback)
-                            .then(result => {
-                                this.setState({
-                                    isDownloaded: result,
-                                })
-                            })
-                            .catch(reason => {
-                                console.warn(reason)
-                                this.setState({
-                                    isDownloaded: false,
-                                })
-                            })
-                    }
-                )
-            }
-        )
-    }
-
-    private updateDownloadState() {
-        const {video} = this.props
-        video.isDownloaded().then(result => {
-            this.setState({
-                downloadProgress: undefined,
-                isDownloaded: result,
-            })
-        })
-    }
+  return (
+    <View style={styles.container}>
+      {renderProgressOrDownloadButton()}
+      {renderFileSize()}
+    </View>
+  )
 }
+
+export default DownloadStatusButton
