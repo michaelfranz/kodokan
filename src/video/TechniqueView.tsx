@@ -11,12 +11,12 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgb(199,200,204)',
     borderBottomWidth: 1,
     flexDirection: 'row',
-    height: 41,
     justifyContent: 'flex-start',
-    marginHorizontal: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   thumbnailContainer: {
-    paddingLeft: 1,
+    paddingRight: 5,
   },
   thumbnailImage: {
     height: 40,
@@ -100,9 +100,13 @@ const TechniqueView: React.FunctionComponent<IProps> = (
       <View style={[styles.thumbnailContainer, { width: 62 }]}>
         {renderThumbnail(techniqueName)}
       </View>
-      <View style={{ backgroundColor: 'transparent', flex: 4 }}>
-        <H3>{techniqueName}</H3>
-        <Text>{translation}</Text>
+      <View
+        style={{
+          flex: 6,
+        }}
+      >
+        <H3 numberOfLines={1}>{techniqueName}</H3>
+        <Text numberOfLines={1}>{translation}</Text>
       </View>
       <View
         style={{

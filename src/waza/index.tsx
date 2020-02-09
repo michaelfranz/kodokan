@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     backgroundColor: 'transparent',
     flex: 1,
+    marginTop: 20,
   },
   backgroundImageContainer: {
     flex: 1,
@@ -36,19 +37,13 @@ const styles = StyleSheet.create({
   wazaClassificationList: {
     backgroundColor: 'transparent',
     flex: 1,
-    paddingLeft: 4,
-    paddingRight: 4,
-    paddingTop: 20,
   },
   techniqueContainer: {
     backgroundColor: 'transparent',
     borderBottomColor: 'rgb(199,200,204)',
     borderBottomWidth: 1,
     justifyContent: 'flex-start',
-    paddingBottom: 6,
-    paddingLeft: 6,
-    paddingRight: 6,
-    paddingTop: 6,
+    padding: 6,
   },
 })
 

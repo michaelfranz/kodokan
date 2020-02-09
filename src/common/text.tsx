@@ -1,5 +1,11 @@
 import React, { ReactNode } from 'react'
-import { Text as RNText, StyleSheet, TextStyle, Linking } from 'react-native'
+import {
+  Text as RNText,
+  StyleSheet,
+  TextStyle,
+  Linking,
+  TextProperties,
+} from 'react-native'
 import { FONT_FAMILY_SUBHEADING, FONT_FAMILY_BASE } from '../theme/type'
 import { FONT_FAMILY_HEADING } from '../theme/type'
 import { PRIMARY_COLOUR, FOREGROUND_COLOUR } from '../theme/colours'
@@ -22,38 +28,54 @@ export const styles = StyleSheet.create({
   },
 })
 
-export interface Props {
+export interface Props extends TextProperties {
   children?: ReactNode
   style?: TextStyle
 }
 
-export const H1: React.FunctionComponent<Props> = ({ children, style }) => {
+export const H1: React.FunctionComponent<Props> = ({
+  children,
+  style,
+  ...rest
+}) => {
   return (
-    <RNText style={[styles.heading, { fontSize: 20 }, style]}>
+    <RNText style={[styles.heading, { fontSize: 20 }, style]} {...rest}>
       {children}
     </RNText>
   )
 }
 
-export const H2: React.FunctionComponent<Props> = ({ children, style }) => {
+export const H2: React.FunctionComponent<Props> = ({
+  children,
+  style,
+  ...rest
+}) => {
   return (
-    <RNText style={[styles.subheading, { fontSize: 18 }, style]}>
+    <RNText style={[styles.subheading, { fontSize: 18 }, style]} {...rest}>
       {children}
     </RNText>
   )
 }
 
-export const H3: React.FunctionComponent<Props> = ({ children, style }) => {
+export const H3: React.FunctionComponent<Props> = ({
+  children,
+  style,
+  ...rest
+}) => {
   return (
-    <RNText style={[styles.subheading, { fontSize: 15 }, style]}>
+    <RNText style={[styles.subheading, { fontSize: 15 }, style]} {...rest}>
       {children}
     </RNText>
   )
 }
 
-export const Text: React.FunctionComponent<Props> = ({ children, style }) => {
+export const Text: React.FunctionComponent<Props> = ({
+  children,
+  style,
+  ...rest
+}) => {
   return (
-    <RNText style={[styles.baseText, { fontSize: 13 }, style]}>
+    <RNText style={[styles.baseText, { fontSize: 13 }, style]} {...rest}>
       {children}
     </RNText>
   )
