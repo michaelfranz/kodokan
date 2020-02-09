@@ -50,7 +50,7 @@ const WazaDetailScreen = ({
   const isLandscape = orientation === 'landscape'
   const [state, setState] = useState<IState>({})
   const techniqueInfo = TechniqueInfo.getInstance()
-  const { classification, isSpinnerVisible } = state
+  const { classification } = state
   const wazaList = classification
     ? techniqueInfo.wazaForClassificationTerm(classification)
     : []

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Image, StyleSheet } from 'react-native'
 import SplashScreen from 'react-native-splash-screen'
-import { PRIMARY_COLOUR } from './theme/colours'
+import { PRIMARY_COLOUR, BACKGROUND_COLOUR } from './theme/colours'
 import { createAppContainer } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
@@ -20,6 +20,40 @@ const styles = StyleSheet.create({
   },
 })
 
+const WazaNavigationScreens = {
+  WazaClassificationScreen: {
+    screen: WazaScreen,
+    navigationOptions: () => ({
+      header: null,
+    }),
+  },
+  WazaClassificationDetailScreen: {
+    navigationOptions: ({ navigation }) => ({
+      title: `${navigation.state.params.classification}`,
+      headerVisible: true,
+      headerStyle: {
+        backgroundColor: BACKGROUND_COLOUR,
+      },
+    }),
+    path: 'wazaClassificationDetail/:waza',
+    screen: WazaDetailScreen,
+  },
+}
+
+const WazaNavigator = createStackNavigator({
+  ...WazaNavigationScreens,
+})
+
+const DictionaryNavigator = createStackNavigator({
+  DictionaryScreen: {
+    screen: DictionaryScreen,
+    navigationOptions: () => ({
+      header: null,
+    }),
+  },
+  ...WazaNavigationScreens,
+})
+
 const MainNavigator = createBottomTabNavigator(
   {
     Dictionary: {
@@ -32,7 +66,7 @@ const MainNavigator = createBottomTabNavigator(
         ),
         tabBarLabel: 'Dictionary',
       },
-      screen: DictionaryScreen,
+      screen: DictionaryNavigator,
     },
     Gokyo: {
       navigationOptions: {
@@ -56,7 +90,7 @@ const MainNavigator = createBottomTabNavigator(
         ),
         tabBarLabel: 'Waza',
       },
-      screen: WazaScreen,
+      screen: WazaNavigator,
     },
     Gi: {
       navigationOptions: {
@@ -97,13 +131,6 @@ const AppNavigator = createStackNavigator(
   {
     MainNavigator: {
       screen: MainNavigator,
-    },
-    WazaClassificationDetailScreen: {
-      navigationOptions: ({ navigation }) => ({
-        title: `${navigation.state.params.classification}`,
-      }),
-      path: 'wazaClassificationDetail/:waza',
-      screen: WazaDetailScreen,
     },
   },
   {
