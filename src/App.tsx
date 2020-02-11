@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Image, StyleSheet } from 'react-native'
 import SplashScreen from 'react-native-splash-screen'
-import { PRIMARY_COLOUR } from './theme/colours'
+import { PRIMARY_COLOUR, BACKGROUND_COLOUR } from './theme/colours'
 import { createAppContainer } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
@@ -10,6 +10,7 @@ import WazaScreen from './waza/index'
 import GokyoScreen from './gokyo/index'
 import GiScreen from './gi/index'
 import AboutScreen from './about/index'
+import WazaDetailScreen from './waza/DetailScreen'
 import { FONT_FAMILY_SUBHEADING } from './theme/type'
 
 const styles = StyleSheet.create({
@@ -17,6 +18,40 @@ const styles = StyleSheet.create({
     height: 25,
     width: 38,
   },
+})
+
+const WazaNavigationScreens = {
+  WazaClassificationScreen: {
+    screen: WazaScreen,
+    navigationOptions: () => ({
+      header: null,
+    }),
+  },
+  WazaClassificationDetailScreen: {
+    navigationOptions: ({ navigation }) => ({
+      title: `${navigation.state.params.classification}`,
+      headerVisible: true,
+      headerStyle: {
+        backgroundColor: BACKGROUND_COLOUR,
+      },
+    }),
+    path: 'wazaClassificationDetail/:waza',
+    screen: WazaDetailScreen,
+  },
+}
+
+const WazaNavigator = createStackNavigator({
+  ...WazaNavigationScreens,
+})
+
+const DictionaryNavigator = createStackNavigator({
+  DictionaryScreen: {
+    screen: DictionaryScreen,
+    navigationOptions: () => ({
+      header: null,
+    }),
+  },
+  ...WazaNavigationScreens,
 })
 
 const MainNavigator = createBottomTabNavigator(
@@ -31,7 +66,7 @@ const MainNavigator = createBottomTabNavigator(
         ),
         tabBarLabel: 'Dictionary',
       },
-      screen: DictionaryScreen,
+      screen: DictionaryNavigator,
     },
     Gokyo: {
       navigationOptions: {
@@ -55,7 +90,7 @@ const MainNavigator = createBottomTabNavigator(
         ),
         tabBarLabel: 'Waza',
       },
-      screen: WazaScreen,
+      screen: WazaNavigator,
     },
     Gi: {
       navigationOptions: {

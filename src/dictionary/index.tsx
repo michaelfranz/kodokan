@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     alignContent: 'center',
-    opacity: 0.35,
+    opacity: 0.25,
     resizeMode: 'cover',
   },
   headerContainer: {
