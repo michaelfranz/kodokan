@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     alignContent: 'center',
-    opacity: 0.35,
+    opacity: 0.15,
     resizeMode: 'cover',
   },
   wazaClassificationList: {
