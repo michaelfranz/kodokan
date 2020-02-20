@@ -1,3 +1,5 @@
+import Amplify, { Analytics } from 'aws-amplify'
+import awsconfig from './aws-exports'
 import React, { useEffect } from 'react'
 import { Image, StyleSheet } from 'react-native'
 import SplashScreen from 'react-native-splash-screen'
@@ -12,6 +14,8 @@ import GiScreen from './gi/index'
 import AboutScreen from './about/index'
 import WazaDetailScreen from './waza/DetailScreen'
 import { FONT_FAMILY_SUBHEADING } from './theme/type'
+
+Amplify.configure(awsconfig)
 
 const styles = StyleSheet.create({
   icon: {
