@@ -120,6 +120,12 @@ const TechniqueView: React.FunctionComponent<IProps> = (
         <DownloadStatusButton
           isOnline={isOnline}
           video={videoMap.get(techniqueName)}
+          onDownloadComplete={() =>
+            setState({
+              ...state,
+              isDownloaded: true,
+            })
+          }
         />
       </View>
     </TouchableOpacity>

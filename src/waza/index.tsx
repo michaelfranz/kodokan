@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   SafeAreaView,
   ImageBackground,
@@ -15,6 +15,7 @@ import Color from 'color'
 
 const BackgroundPortrait = require('../images/background3P.png')
 const BackgroundLandscape = require('../images/background3L.png')
+const dismissKeyboard = require('react-native-dismiss-keyboard')
 
 const styles = StyleSheet.create({
   container: {
@@ -65,6 +66,45 @@ const WazaScreen = ({
   const [state, setState] = useState<IState>({})
 
   const techniqueInfo = TechniqueInfo.getInstance()
+
+  useEffect(() => {
+    const { params } = navigation.state
+    setStateFromParams(params)
+  }, [])
+
+  useEffect(() => {
+    const { params } = navigation.state
+    setStateFromParams(params)
+  }, [navigation.state.params])
+
+  const setStateFromParams = params => {
+    dismissKeyboard()
+    if (!params) {
+      setState({
+        classification: undefined,
+        selectedTechnique: undefined,
+      })
+      return
+    }
+    const { term } = params
+    if (techniqueInfo.isClassification(term)) {
+      setState({
+        classification: term,
+        selectedTechnique: undefined,
+      })
+      return
+    }
+    if (techniqueInfo.isWazaTerm(term)) {
+      const classification = techniqueInfo.classificationForWazaTerm(term)
+      setState({
+        classification,
+        selectedTechnique: term,
+      })
+
+      const callback = () => showDetails(classification)
+      setTimeout(callback, 1000)
+    }
+  }
 
   const showDetails = (classification: string) => {
     const { selectedTechnique } = state

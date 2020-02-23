@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
 interface IProps {
   video: Video | undefined
   isOnline: boolean | null
+  onDownloadComplete: () => void
 }
 
 interface IState {
@@ -38,6 +39,7 @@ interface IState {
 const DownloadStatusButton: React.FunctionComponent<IProps> = ({
   video,
   isOnline,
+  onDownloadComplete,
 }): React.ReactElement => {
   const [state, setState] = useState<IState>({
     downloadedSize: 0,
@@ -154,6 +156,10 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
           isDownloaded: result,
           isDownloading: false,
         })
+
+        if (onDownloadComplete) {
+          onDownloadComplete()
+        }
       })
       .catch(reason => {
         console.warn(reason)

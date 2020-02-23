@@ -5,6 +5,9 @@ import TechniqueInfo from '../data/WazaInfo'
 import { FlatList } from 'react-native-gesture-handler'
 import ArticleInfo from '../data/ArticleInfo'
 import TechniqueView from '../video/TechniqueView'
+import PurchaseHandler from '../purchase/PurchaseHandler'
+import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
+import { videoMap } from '../data/VideoInfo'
 
 interface IProps {
   navigation: any
@@ -73,6 +76,19 @@ const WazaDetailScreen = ({
     })
   }
 
+  const longRunningOpCallback = (longOpIsRunning: boolean) => {
+    setState({ ...state, isSpinnerVisible: longOpIsRunning })
+  }
+
+  const showVideoScreen = uri => {
+    setState({
+      ...state,
+      selectedTechnique: undefined,
+    })
+    const { navigate } = navigation
+    navigate('VideoScreen', { uri })
+  }
+
   const renderTechnique = ({ item }) => {
     const article = ArticleInfo.articleForTerm(item)
     if (!article) {
@@ -80,13 +96,31 @@ const WazaDetailScreen = ({
     }
 
     const { name, displayName, translation } = article
+
+    const purchaseHandler = new PurchaseHandler(
+      VIDEO_PRODUCT,
+      () => {
+        setState({
+          ...state,
+          isSpinnerVisible: false,
+        })
+        const video = videoMap.get(item)
+        video!.uri().then(result => {
+          showVideoScreen(result)
+        })
+      },
+      longRunningOpCallback
+    )
+
     return (
       <TechniqueView
         isSelected={name === state.selectedTechnique}
         displayName={displayName}
         techniqueName={name}
         translation={translation}
-        onPress={() => alert('no action for now')}
+        onPress={() => {
+          purchaseHandler.conditionalPlay()
+        }}
         isOnline={isOnline}
       />
     )
@@ -102,7 +136,7 @@ const WazaDetailScreen = ({
         <View style={styles.innerContainer}>
           <FlatList
             style={styles.wazaList}
-            data={wazaList.filter(item => item === 'Kata-Guruma')}
+            data={wazaList}
             renderItem={renderTechnique}
             keyExtractor={item => item}
             extraData={state}

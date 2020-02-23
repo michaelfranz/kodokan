@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
 export interface Props {
   orientation: 'landscape' | 'portrait'
   isOnline: boolean | null
+  navigation: any
 }
 
 const withScreenLayout = <P extends {}>(
