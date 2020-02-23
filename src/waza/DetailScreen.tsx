@@ -9,6 +9,7 @@ import TechniqueView from '../video/TechniqueView'
 interface IProps {
   navigation: any
   orientation: 'landscape' | 'portrait'
+  isOnline: boolean | null
 }
 
 interface IState {
@@ -46,6 +47,7 @@ const styles = StyleSheet.create({
 const WazaDetailScreen = ({
   orientation,
   navigation,
+  isOnline,
 }): React.ReactElement<IProps> => {
   const isLandscape = orientation === 'landscape'
   const [state, setState] = useState<IState>({})
@@ -60,12 +62,12 @@ const WazaDetailScreen = ({
   }, [])
 
   const setStateFromParams = () => {
-    const { state } = navigation
-    const { params } = state
+    const { params } = navigation.state
     const { classification, selectedTechnique } = params
 
     dismissKeyboard()
     setState({
+      ...state,
       classification,
       selectedTechnique,
     })
@@ -85,6 +87,7 @@ const WazaDetailScreen = ({
         techniqueName={name}
         translation={translation}
         onPress={() => alert('no action for now')}
+        isOnline={isOnline}
       />
     )
   }
@@ -99,7 +102,7 @@ const WazaDetailScreen = ({
         <View style={styles.innerContainer}>
           <FlatList
             style={styles.wazaList}
-            data={wazaList}
+            data={wazaList.filter(item => item === 'Kami-Shiho-Gatame')}
             renderItem={renderTechnique}
             keyExtractor={item => item}
             extraData={state}

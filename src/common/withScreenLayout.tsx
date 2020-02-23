@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
 import { BACKGROUND_COLOUR } from '../theme/colours'
+import NetInfo, { NetInfoSubscription } from '@react-native-community/netinfo'
 
 const dismissKeyboard = require('react-native-dismiss-keyboard')
 
@@ -15,6 +16,7 @@ const styles = StyleSheet.create({
 
 export interface Props {
   orientation: 'landscape' | 'portrait'
+  isOnline: boolean | null
 }
 
 const withScreenLayout = <P extends {}>(
@@ -25,6 +27,8 @@ const withScreenLayout = <P extends {}>(
     const [orientation, setOrientation] = useState<'landscape' | 'portrait'>(
       'portrait'
     )
+    let networkUnsubscribeHandler: null | NetInfoSubscription = null
+    const [isOnline, setIsOnline] = useState<boolean | null>(null)
 
     const getOrientation = () => {
       if (Dimensions.get('window').width < Dimensions.get('window').height) {
@@ -35,6 +39,7 @@ const withScreenLayout = <P extends {}>(
     }
 
     useEffect(() => {
+      setNetworkStatusListener()
       getOrientation()
       Dimensions.addEventListener('change', () => {
         getOrientation()
@@ -44,8 +49,20 @@ const withScreenLayout = <P extends {}>(
         Dimensions.removeEventListener('change', () => {
           getOrientation()
         })
+
+        networkUnsubscribeHandler && networkUnsubscribeHandler()
       }
     }, [])
+
+    const handleConnectivityChange = networkState => {
+      setIsOnline(networkState.isInternetReachable)
+    }
+
+    const setNetworkStatusListener = () => {
+      networkUnsubscribeHandler = NetInfo.addEventListener(
+        handleConnectivityChange
+      )
+    }
 
     dismissKeyboard()
     return (
@@ -54,6 +71,7 @@ const withScreenLayout = <P extends {}>(
           {...props}
           wrapInSafeArea={wrapInSafeArea}
           orientation={orientation}
+          isOnline={isOnline}
         />
       </View>
     )

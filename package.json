@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.6.3",
-    "@react-native-community/netinfo": "^5.3.3",
+    "@react-native-community/netinfo": "^5.5.0",
     "@types/fuse": "2.5.2",
     "bluebird": "3.7.2",
     "color": "^3.1.2",
