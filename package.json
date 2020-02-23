@@ -28,6 +28,7 @@
     "react-native-i18n": "2.0.15",
     "react-native-in-app-utils": "6.0.2",
     "react-native-loading-spinner-overlay": "1.0.1",
+    "react-native-progress-circle": "^2.1.0",
     "react-native-reanimated": "1.4.0",
     "react-native-screens": "2.0.0-alpha.15",
     "react-native-simple-store": "2.0.2",

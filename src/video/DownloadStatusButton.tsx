@@ -2,9 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native'
 import { Text } from '../common/text'
 import Video from '../data/Video'
-import { FOREGROUND_COLOUR, FOREGROUND_COLOUR_ALT } from '../theme/colours'
+import {
+  FOREGROUND_COLOUR,
+  FOREGROUND_COLOUR_ALT,
+  BACKGROUND_COLOUR,
+} from '../theme/colours'
 import { strings } from '../locales/i18n'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import ProgressCircle from 'react-native-progress-circle'
+import { INFO_COLOUR } from '../theme/colours'
 
 const styles = StyleSheet.create({
   container: {
@@ -39,13 +45,35 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     isDownloading: false,
   })
 
+  const [isMounted, setIsMounted] = useState<boolean>(true)
+
   if (!video) {
     return <View />
   }
 
   useEffect(() => {
     setStateFromProps()
+
+    return () => {
+      setIsMounted(false)
+    }
   }, [])
+
+  useEffect(() => {
+    if (state.isDownloading && !isOnline) {
+      Alert.alert(
+        'Download cancelled',
+        strings('OfflineMessage'),
+        [{ text: 'OK', onPress: () => {} }],
+        { cancelable: false }
+      )
+      setState({
+        ...state,
+        downloadedSize: 0,
+        isDownloading: false,
+      })
+    }
+  }, [isOnline])
 
   const setStateFromProps = () => {
     if (!video) {
@@ -101,6 +129,9 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
       })
     }
     const progressCallback = (bytesDownloaded: number) => {
+      if (!isMounted) {
+        return
+      }
       const isDownloading = bytesDownloaded < video.size
       setState({
         ...state,
@@ -114,7 +145,9 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
         progressCallback,
       })
       .then(result => {
-        console.log('then callback')
+        if (!isMounted) {
+          return
+        }
         setState({
           ...state,
           downloadedSize: result ? video.size : state.downloadedSize,
@@ -124,6 +157,9 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
       })
       .catch(reason => {
         console.warn(reason)
+        if (!isMounted) {
+          return
+        }
         setState({
           ...state,
           isDownloaded: false,
@@ -148,8 +184,22 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     }
   }
 
+  const downloadedPercentage = (): number => {
+    const { downloadedSize = 0 } = state
+    return (downloadedSize / video.size) * 100
+  }
+
   const renderProgressElement = () => {
-    return null
+    return (
+      <ProgressCircle
+        percent={downloadedPercentage()}
+        radius={12}
+        borderWidth={2}
+        color={INFO_COLOUR}
+        shadowColor={BACKGROUND_COLOUR}
+        bgColor={BACKGROUND_COLOUR}
+      ></ProgressCircle>
+    )
   }
 
   const renderButtonElement = () => {
@@ -188,6 +238,12 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     )
   }
 
+  const renderDownloadedPercentage = () => {
+    return (
+      <Text style={styles.fileSize}>{downloadedPercentage().toFixed()}%</Text>
+    )
+  }
+
   const renderFileSize = () => {
     const { size } = video
     return <Text style={styles.fileSize}>{(size / 1048576).toFixed(1)}MB</Text>
@@ -200,7 +256,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
   return (
     <View style={styles.container}>
       {renderProgressOrDownloadButton()}
-      {renderFileSize()}
+      {state.isDownloading ? renderDownloadedPercentage() : renderFileSize()}
     </View>
   )
 }

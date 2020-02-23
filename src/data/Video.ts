@@ -25,9 +25,23 @@ export default class Video {
   }
 
   public async isDownloaded(): Promise<boolean> {
-    const exists = await RNFS.exists(this.localPath())
-    console.log('exists', exists)
-    return exists
+    const fileExists = await RNFS.exists(this.localPath())
+    if (!fileExists) {
+      return false
+    }
+    const file = await RNFS.stat(this.localPath())
+
+    return Number(file.size) >= this.size
+  }
+
+  public async downloadedSize(): Promise<number> {
+    const fileExists = await RNFS.exists(this.localPath())
+    if (!fileExists) {
+      return 0
+    }
+    const file = await RNFS.stat(this.localPath())
+
+    return file ? Number(file.size) : 0
   }
 
   public async download({

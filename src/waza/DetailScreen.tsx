@@ -102,7 +102,7 @@ const WazaDetailScreen = ({
         <View style={styles.innerContainer}>
           <FlatList
             style={styles.wazaList}
-            data={wazaList.filter(item => item === 'Kami-Shiho-Gatame')}
+            data={wazaList.filter(item => item === 'Kata-Guruma')}
             renderItem={renderTechnique}
             keyExtractor={item => item}
             extraData={state}
