@@ -156,7 +156,7 @@ class VideoScreen extends React.Component<Props, IState> {
       return
     }
     this.setState(prevState => {
-      return { paused: !prevState.paused }
+      return { paused: !prevState.paused, controlsDisabled: false }
     })
   }
 
@@ -169,15 +169,7 @@ class VideoScreen extends React.Component<Props, IState> {
         controlsDisabled: true, // this is to prevent onEnd callback being called multiple times
       },
       () => {
-        if (this.state.paused) {
-          // Video needs to be un-paused in order for "stop" to work by setting the seek time
-          this.setState({ paused: false }, () => {
-            // Now set seek time to beyond the end of the video
-            this.player.seek(999999)
-          })
-        } else {
-          this.player.seek(999999)
-        }
+        this.props.navigation.goBack(null)
       }
     )
   }
