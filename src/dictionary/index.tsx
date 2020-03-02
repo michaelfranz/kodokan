@@ -1,3 +1,4 @@
+import Amplify, { Analytics } from 'aws-amplify' 
 import React, { useState, useEffect } from 'react'
 import {
   View,
@@ -195,6 +196,9 @@ const DictionaryScreen = ({
   }
 
   const renderHeader = (): JSX.Element => {
+
+    Analytics.record({name: 'dictionaryVisit'})
+
     return (
       <View style={styles.headerContainer}>
         <SearchBar

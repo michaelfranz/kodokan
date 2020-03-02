@@ -1,0 +1,20 @@
+{
+    "appName": "kodokanpro64",
+    "roleName": "pinpointLambdaRole873de933",
+    "cloudWatchPolicyName": "cloudWatchPolicy873de933",
+    "pinpointPolicyName": "pinpointPolicy873de933",
+    "authPolicyName": "pinpoint_amplify_873de933",
+    "unauthPolicyName": "pinpoint_amplify_873de933",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}
