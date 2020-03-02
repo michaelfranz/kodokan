@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   innerContainer: {
-    backgroundColor: 'transparent',
     flex: 1,
+    justifyContent: 'space-between',
   },
   backgroundImageContainer: {
     flex: 1,
@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
   },
   techniqueList: {
     flexDirection: 'column',
-    flex: 1,
   },
 })
 
