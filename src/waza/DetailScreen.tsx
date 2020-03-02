@@ -5,10 +5,14 @@ import TechniqueInfo from '../data/WazaInfo'
 import { FlatList } from 'react-native-gesture-handler'
 import ArticleInfo from '../data/ArticleInfo'
 import TechniqueView from '../video/TechniqueView'
+import PurchaseHandler from '../purchase/PurchaseHandler'
+import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
+import { videoMap } from '../data/VideoInfo'
 
 interface IProps {
   navigation: any
   orientation: 'landscape' | 'portrait'
+  isOnline: boolean | null
 }
 
 interface IState {
@@ -46,6 +50,7 @@ const styles = StyleSheet.create({
 const WazaDetailScreen = ({
   orientation,
   navigation,
+  isOnline,
 }): React.ReactElement<IProps> => {
   const isLandscape = orientation === 'landscape'
   const [state, setState] = useState<IState>({})
@@ -60,15 +65,28 @@ const WazaDetailScreen = ({
   }, [])
 
   const setStateFromParams = () => {
-    const { state } = navigation
-    const { params } = state
+    const { params } = navigation.state
     const { classification, selectedTechnique } = params
 
     dismissKeyboard()
     setState({
+      ...state,
       classification,
       selectedTechnique,
     })
+  }
+
+  const longRunningOpCallback = (longOpIsRunning: boolean) => {
+    setState({ ...state, isSpinnerVisible: longOpIsRunning })
+  }
+
+  const showVideoScreen = uri => {
+    setState({
+      ...state,
+      selectedTechnique: undefined,
+    })
+    const { navigate } = navigation
+    navigate('VideoScreen', { uri })
   }
 
   const renderTechnique = ({ item }) => {
@@ -78,13 +96,32 @@ const WazaDetailScreen = ({
     }
 
     const { name, displayName, translation } = article
+
+    const purchaseHandler = new PurchaseHandler(
+      VIDEO_PRODUCT,
+      () => {
+        setState({
+          ...state,
+          isSpinnerVisible: false,
+        })
+        const video = videoMap.get(item)
+        video!.uri().then(result => {
+          showVideoScreen(result)
+        })
+      },
+      longRunningOpCallback
+    )
+
     return (
       <TechniqueView
         isSelected={name === state.selectedTechnique}
         displayName={displayName}
         techniqueName={name}
         translation={translation}
-        onPress={() => alert('no action for now')}
+        onPress={() => {
+          purchaseHandler.conditionalPlay()
+        }}
+        isOnline={isOnline}
       />
     )
   }
