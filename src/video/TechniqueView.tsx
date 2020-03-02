@@ -30,13 +30,14 @@ export interface IProps {
   isSelected: boolean
   onPress: () => void
   translation: string
+  isOnline: boolean | null
 }
 
 interface IState {
   downloadProgress?: (bytesWritten: number, contentLength: number) => void
   fileSize: number
   isDownloaded: boolean
-  isOnline: boolean
+  isMounted: boolean
 }
 
 const TechniqueView: React.FunctionComponent<IProps> = (
@@ -46,11 +47,11 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     downloadProgress: undefined,
     fileSize: 0,
     isDownloaded: false,
-    isOnline: true,
+    isMounted: true,
   })
 
-  const { techniqueName, translation, onPress, isSelected } = props
-  const { isDownloaded, isOnline } = state
+  const { techniqueName, translation, onPress, isSelected, isOnline } = props
+  const { isDownloaded } = state
 
   useEffect(() => {
     setStateFromProps()
@@ -119,6 +120,12 @@ const TechniqueView: React.FunctionComponent<IProps> = (
         <DownloadStatusButton
           isOnline={isOnline}
           video={videoMap.get(techniqueName)}
+          onDownloadComplete={() =>
+            setState({
+              ...state,
+              isDownloaded: true,
+            })
+          }
         />
       </View>
     </TouchableOpacity>

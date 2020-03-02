@@ -12,6 +12,7 @@ import GiScreen from './gi/index'
 import AboutScreen from './about/index'
 import WazaDetailScreen from './waza/DetailScreen'
 import { FONT_FAMILY_SUBHEADING } from './theme/type'
+import VideoScreen from './video/VideoScreen'
 
 const styles = StyleSheet.create({
   icon: {
@@ -37,6 +38,14 @@ const WazaNavigationScreens = {
     }),
     path: 'wazaClassificationDetail/:waza',
     screen: WazaDetailScreen,
+  },
+}
+
+const VideoNavigationScreen = {
+  VideoScreen: {
+    navigationOptions: () => ({}),
+    path: 'video/:uri',
+    screen: VideoScreen,
   },
 }
 
@@ -132,6 +141,7 @@ const AppNavigator = createStackNavigator(
     MainNavigator: {
       screen: MainNavigator,
     },
+    ...VideoNavigationScreen,
   },
   {
     headerMode: 'none',
