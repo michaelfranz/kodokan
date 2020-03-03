@@ -9,9 +9,6 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import * as DeviceInfo from 'react-native-device-info'
-import { Analytics, Hits as GAHits } from 'react-native-google-analytics'
-
 import PurchaseManager, { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
 
 import Video from 'react-native-video'
@@ -84,24 +81,6 @@ class VideoScreen extends React.Component<Props, IState> {
     const { state } = this.props.navigation
     const { params } = state
     this.setStateFromParams(params)
-    this.initGA()
-  }
-
-  public initGA() {
-    const clientId = DeviceInfo.getUniqueId()
-    this.ga = new Analytics(
-      'UA-113168294-1',
-      clientId,
-      1,
-      DeviceInfo.getUserAgent()
-    )
-    const screenView = new GAHits.ScreenView(
-      'KodokanPro',
-      this.constructor.name,
-      DeviceInfo.getReadableVersion(),
-      DeviceInfo.getBundleId()
-    )
-    this.ga.send(screenView)
   }
 
   public render() {

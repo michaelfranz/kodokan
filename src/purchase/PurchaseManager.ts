@@ -1,10 +1,8 @@
 import Bluebird from "bluebird";
-import { Analytics } from "react-native-google-analytics";
 import { NativeModules } from "react-native";
 import { Product } from "./Product";
 import { Transaction } from "./Transaction";
 import store from "react-native-simple-store";
-import * as DeviceInfo from "react-native-device-info";
 
 const { InAppUtils } = NativeModules;
 
@@ -15,14 +13,6 @@ export const PLAY_EVALUATION_LIMIT = 10;
 export const PLAY_EVALUATION_REMINDERS = [5, 2]; // show evaluation reminder at 5, 2 plays respectively
 
 Bluebird.promisifyAll(InAppUtils);
-
-const clientId = DeviceInfo.getUniqueId();
-const ga = new Analytics(
-  "UA-113168294-1",
-  clientId,
-  1,
-  DeviceInfo.getUserAgent()
-);
 
 export default class PurchaseManager {
   // Restores any previously purchased products. Restored products (if any) are returned as an array of Transactions.
@@ -138,7 +128,6 @@ export default class PurchaseManager {
       transactionReceipt: rawTransaction.transactionReceipt
     });
     await PurchaseManager.savePurchaseTransaction(transaction);
-    this.postImpression(product, transaction);
     return transaction;
   }
 
@@ -167,36 +156,4 @@ export default class PurchaseManager {
     return (await this.remainingPlayCount()) <= 0;
   }
 
-  private postImpression(product: Product, transaction: Transaction) {
-    console.warn("postImpression 1");
-    try {
-      // TODO the following call fails fo some reason
-      ga("ec:addProduct", {
-        brand: "KodokanPro",
-        category: this.productName,
-        coupon: transaction.transactionReceipt,
-        id: product.identifier,
-        name: product.title,
-        price: product.price,
-        quantity: 1,
-        variant: "n/a"
-      });
-    } catch (error) {
-      console.warn(error);
-    }
-    console.warn("postImpression 2");
-    try {
-      // TODO the following call fails fo some reason
-      ga("ec:setAction", "purchase", {
-        affiliation: "KodokanPro",
-        coupon: transaction.transactionReceipt,
-        id: transaction.transactionIdentifier,
-        revenue: product.price,
-        shipping: 0,
-        tax: 0
-      });
-    } catch (error) {
-      console.warn(error);
-    }
-  }
 }
