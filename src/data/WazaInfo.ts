@@ -362,13 +362,15 @@ export default class TechniqueInfo {
     const allClassifications = wazaClassificationList.filter(
       classification => classification !== 'All'
     )
-    return allClassifications.find(classification =>
-      wazaClassificationMap.get(classification).includes(wazaTerm)
+    return (
+      allClassifications.find(classification =>
+        wazaClassificationMap!.get(classification)!.includes(wazaTerm)
+      ) || ''
     )
   }
 
   public wazaForClassificationTerm = (classificationTerm: string): string[] => {
-    return wazaClassificationMap.get(classificationTerm)
+    return wazaClassificationMap!.get(classificationTerm) || ['']
   }
 
   public wazaClassifications = (): string[] => wazaClassificationList
@@ -376,10 +378,12 @@ export default class TechniqueInfo {
   public isKyoWazaTerm = (term: string): boolean => this.kyoWazaTerms.has(term)
 
   public kyoForKyoWazaTerm = (wazaTerm: string): string => {
-    return allKyo.find(kyo => kyoWazaTermsMap.get(kyo).includes(wazaTerm))
+    return (
+      allKyo.find(kyo => kyoWazaTermsMap!.get(kyo)!.includes(wazaTerm)) || ''
+    )
   }
 
   public wazaForKyo = (kyo: string): string[] => {
-    return kyoWazaTermsMap.get(kyo)
+    return kyoWazaTermsMap!.get(kyo) || ['']
   }
 }
