@@ -4,6 +4,7 @@ import { videoMap } from '../data/VideoInfo'
 import { H2, H3 } from '../common/text'
 import { strings } from '../locales/i18n'
 import DownloadStatusButton from './DownloadStatusButton'
+import { kyoColours } from '../data/WazaInfo'
 
 const styles = StyleSheet.create({
   techniqueContainer: {
@@ -19,9 +20,14 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   thumbnailImage: {
-    height: 75,
-    width: 120,
-    borderRadius: 4,
+    height: 69,
+    width: 110,
+    marginRight: 3,
+  },
+  kyoIndicator: {
+    width: 8,
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
   },
 })
 
@@ -32,6 +38,8 @@ export interface IProps {
   onPress: () => void
   translation: string
   isOnline: boolean | null
+  renderKyoIndicator?: boolean
+  kyo?: string
 }
 
 interface IState {
@@ -51,7 +59,15 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     isMounted: true,
   })
 
-  const { techniqueName, translation, onPress, isSelected, isOnline } = props
+  const {
+    techniqueName,
+    translation,
+    onPress,
+    isSelected,
+    isOnline,
+    renderKyoIndicator,
+    kyo,
+  } = props
   const { isDownloaded } = state
 
   useEffect(() => {
@@ -84,7 +100,15 @@ const TechniqueView: React.FunctionComponent<IProps> = (
       return null // should render placeholder image
     }
     const path = video.thumbnail as any
-    return <Image source={path} style={styles.thumbnailImage} />
+    const roundedCornersStyle = renderKyoIndicator
+      ? { borderTopRightRadius: 4, borderBottomRightRadius: 4 }
+      : { borderRadius: 4 }
+    return (
+      <Image
+        source={path}
+        style={[styles.thumbnailImage, roundedCornersStyle]}
+      />
+    )
   }
 
   let onPressAction = onPress
@@ -99,17 +123,21 @@ const TechniqueView: React.FunctionComponent<IProps> = (
       ]}
       onPress={onPressAction}
     >
+      {renderKyoIndicator && (
+        <View
+          style={[styles.kyoIndicator, { backgroundColor: kyoColours[kyo] }]}
+        />
+      )}
       <View style={styles.thumbnailContainer}>
         {renderThumbnail(techniqueName)}
       </View>
-      <View>
-        <H2 numberOfLines={1}>{techniqueName}</H2>
+      <View style={{ flex: 1 }}>
+        <H2 numberOfLines={2}>{techniqueName}</H2>
         <H3 numberOfLines={1}>{translation}</H3>
       </View>
       <View
         style={{
           alignItems: 'flex-start',
-          flex: 1,
           flexDirection: 'row',
           justifyContent: 'flex-end',
         }}

@@ -9,13 +9,14 @@ import {
 import withScreenLayout from '../common/withScreenLayout'
 import { H3 } from '../common/text'
 import Spinner from 'react-native-loading-spinner-overlay'
-import { PRIMARY_COLOUR } from '../theme/colours'
+import { PRIMARY_COLOUR, GO, IK, NI, SAN, YON } from '../theme/colours'
 import TechniqueInfo from '../data/WazaInfo'
 import TechniqueView from '../video/TechniqueView'
 import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
 import { videoMap } from '../data/VideoInfo'
 import ArticleInfo from '../data/ArticleInfo'
 import PurchaseHandler from '../purchase/PurchaseHandler'
+import { FlatList } from 'react-native-gesture-handler'
 
 const BackgroundLandscape = require('../images/background2L.png')
 const BackgroundPortrait = require('../images/background2P.png')
@@ -39,19 +40,19 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   GO: {
-    backgroundColor: 'rgb(243,255,20)',
+    backgroundColor: GO,
   },
   IK: {
-    backgroundColor: 'rgb(220,58,13)',
+    backgroundColor: IK,
   },
   NI: {
-    backgroundColor: 'rgb(18,88,220)',
+    backgroundColor: NI,
   },
   SAN: {
-    backgroundColor: 'rgb(28,220,13)',
+    backgroundColor: SAN,
   },
   YON: {
-    backgroundColor: 'rgb(220,134,13)',
+    backgroundColor: YON,
   },
   kyoSelector: {
     borderRadius: 26,
@@ -107,6 +108,7 @@ const GokyoScreen = ({
     isLoading: false,
     currentKyo: 'GO',
   })
+  const allKyoWazaTerms = Array.from(techniqueInfo.kyoWazaTerms)
   const techniqueNames = techniqueInfo.wazaForKyo(state.currentKyo)
 
   useEffect(() => {
@@ -191,7 +193,7 @@ const GokyoScreen = ({
     if (!article) {
       return null
     }
-    const { name, displayName, translation } = article
+    const { name, displayName, translation, kyo } = article
 
     const purchaseHandler = new PurchaseHandler(
       VIDEO_PRODUCT,
@@ -217,15 +219,21 @@ const GokyoScreen = ({
         translation={translation}
         onPress={() => purchaseHandler.conditionalPlay()}
         key={techniqueName}
+        renderKyoIndicator
+        kyo={kyo}
       />
     )
   }
 
   const renderPortraitBody = () => {
     return (
-      <View style={styles.techniqueList}>
-        {techniqueNames.map(name => renderTechnique(name))}
-      </View>
+      <FlatList
+        style={styles.techniqueList}
+        data={allKyoWazaTerms}
+        renderItem={item => renderTechnique(item.item)}
+        keyExtractor={item => item}
+        extraData={state}
+      />
     )
   }
 

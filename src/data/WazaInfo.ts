@@ -1,3 +1,5 @@
+import { GO, YON, SAN, NI, IK } from '../theme/colours'
+
 const wazaClassificationList: string[] = [
   'All',
   'Ashi-Waza',
@@ -313,6 +315,20 @@ const kyoWazaTermsMap: Map<string, string[]> = new Map<string, string[]>([
   ],
 ])
 
+export const kyoColours: {
+  GO: string
+  YON: string
+  SAN: string
+  NI: string
+  IK: string
+} = {
+  GO,
+  YON,
+  SAN,
+  NI,
+  IK,
+}
+
 export default class TechniqueInfo {
   public static getInstance() {
     if (!TechniqueInfo.instance) {
@@ -324,7 +340,6 @@ export default class TechniqueInfo {
   private static instance: TechniqueInfo
 
   private wazaTerms: Set<string> = new Set()
-  private kyoWazaTerms: Set<string> = new Set()
 
   private constructor() {
     // Initialise all techniques ("waza")
@@ -352,6 +367,8 @@ export default class TechniqueInfo {
       kyoWaza.forEach(name => this.kyoWazaTerms.add(name))
     )
   }
+
+  public kyoWazaTerms: Set<string> = new Set()
 
   public isWazaTerm = (term: string): boolean => this.wazaTerms.has(term)
 
