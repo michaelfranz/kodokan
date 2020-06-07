@@ -245,6 +245,7 @@ const GokyoScreen = ({
             return
           }
           setState({ ...state, currentKyo: null })
+          purchaseHandler.conditionalPlay()
         }}
       />
     )
