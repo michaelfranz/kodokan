@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native'
 import { videoMap } from '../data/VideoInfo'
-import { H3, Text } from '../common/text'
+import { H2, H3 } from '../common/text'
 import { strings } from '../locales/i18n'
 import DownloadStatusButton from './DownloadStatusButton'
 
@@ -13,14 +13,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
   },
   thumbnailContainer: {
     paddingRight: 5,
   },
   thumbnailImage: {
-    height: 40,
-    width: 60,
+    height: 75,
+    width: 120,
+    borderRadius: 4,
   },
 })
 
@@ -98,20 +99,16 @@ const TechniqueView: React.FunctionComponent<IProps> = (
       ]}
       onPress={onPressAction}
     >
-      <View style={[styles.thumbnailContainer, { width: 62 }]}>
+      <View style={styles.thumbnailContainer}>
         {renderThumbnail(techniqueName)}
       </View>
-      <View
-        style={{
-          flex: 6,
-        }}
-      >
-        <H3 numberOfLines={1}>{techniqueName}</H3>
-        <Text numberOfLines={1}>{translation}</Text>
+      <View>
+        <H2 numberOfLines={1}>{techniqueName}</H2>
+        <H3 numberOfLines={1}>{translation}</H3>
       </View>
       <View
         style={{
-          alignItems: 'center',
+          alignItems: 'flex-start',
           flex: 1,
           flexDirection: 'row',
           justifyContent: 'flex-end',

@@ -199,7 +199,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     return (
       <ProgressCircle
         percent={downloadedPercentage()}
-        radius={12}
+        radius={14}
         borderWidth={2}
         color={INFO_COLOUR}
         shadowColor={BACKGROUND_COLOUR}
@@ -222,7 +222,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     return (
       <Ionicons
         name="md-checkmark-circle"
-        size={20}
+        size={24}
         color={FOREGROUND_COLOUR_ALT}
       />
     )
@@ -232,7 +232,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     return (
       <Ionicons
         name="ios-cloud-download"
-        size={20}
+        size={24}
         color={FOREGROUND_COLOUR_ALT}
       />
     )
@@ -240,7 +240,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
 
   const renderOfflineNotDownloadedElement = () => {
     return (
-      <Ionicons name="ios-warning" size={20} color={FOREGROUND_COLOUR_ALT} />
+      <Ionicons name="ios-warning" size={24} color={FOREGROUND_COLOUR_ALT} />
     )
   }
 
