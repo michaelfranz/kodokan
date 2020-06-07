@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import { View, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Alert,
+  Image,
+  StyleProp,
+  ViewStyle,
+} from 'react-native'
 import { videoMap } from '../data/VideoInfo'
 import { H2, H3 } from '../common/text'
 import { strings } from '../locales/i18n'
 import DownloadStatusButton from './DownloadStatusButton'
 import { kyoColours } from '../data/WazaInfo'
+import TechniqueInfo from '../data/WazaInfo'
+import DoubleClick from 'react-native-double-tap'
 
 const styles = StyleSheet.create({
   techniqueContainer: {
-    backgroundColor: 'transparent',
     borderBottomColor: 'rgb(199,200,204)',
     borderBottomWidth: 1,
     flexDirection: 'row',
@@ -36,10 +44,11 @@ export interface IProps {
   displayName: string
   isSelected: boolean
   onPress: () => void
+  onDoubleTap?: () => void
   translation: string
   isOnline: boolean | null
   renderKyoIndicator?: boolean
-  kyo?: string
+  containerStyles?: StyleProp<ViewStyle>
 }
 
 interface IState {
@@ -66,9 +75,13 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     isSelected,
     isOnline,
     renderKyoIndicator,
-    kyo,
+    containerStyles,
+    onDoubleTap,
   } = props
   const { isDownloaded } = state
+
+  const techniqueInfo = TechniqueInfo.getInstance()
+  const kyo = techniqueInfo.kyoForKyoWazaTerm(techniqueName)
 
   useEffect(() => {
     setStateFromProps()
@@ -116,44 +129,46 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     onPressAction = noNetworkAction
   }
   return (
-    <TouchableOpacity
-      style={[
-        styles.techniqueContainer,
-        isSelected ? { backgroundColor: 'rgba(255,0,0,0.3)' } : {},
-      ]}
-      onPress={onPressAction}
-    >
-      {renderKyoIndicator && (
-        <View
-          style={[styles.kyoIndicator, { backgroundColor: kyoColours[kyo] }]}
-        />
-      )}
-      <View style={styles.thumbnailContainer}>
-        {renderThumbnail(techniqueName)}
-      </View>
-      <View style={{ flex: 1 }}>
-        <H2 numberOfLines={2}>{techniqueName}</H2>
-        <H3 numberOfLines={1}>{translation}</H3>
-      </View>
+    <DoubleClick singleTap={onPressAction} doubleTap={onDoubleTap}>
       <View
-        style={{
-          alignItems: 'flex-start',
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-        }}
+        style={[
+          styles.techniqueContainer,
+          isSelected ? { backgroundColor: 'rgba(255,0,0,0.3)' } : {},
+          containerStyles,
+        ]}
       >
-        <DownloadStatusButton
-          isOnline={isOnline}
-          video={videoMap.get(techniqueName)}
-          onDownloadComplete={() =>
-            setState({
-              ...state,
-              isDownloaded: true,
-            })
-          }
-        />
+        {renderKyoIndicator && (
+          <View
+            style={[styles.kyoIndicator, { backgroundColor: kyoColours[kyo] }]}
+          />
+        )}
+        <View style={styles.thumbnailContainer}>
+          {renderThumbnail(techniqueName)}
+        </View>
+        <View style={{ flex: 1 }}>
+          <H2 numberOfLines={2}>{techniqueName}</H2>
+          <H3 numberOfLines={1}>{translation}</H3>
+        </View>
+        <View
+          style={{
+            alignItems: 'flex-start',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <DownloadStatusButton
+            isOnline={isOnline}
+            video={videoMap.get(techniqueName)}
+            onDownloadComplete={() =>
+              setState({
+                ...state,
+                isDownloaded: true,
+              })
+            }
+          />
+        </View>
       </View>
-    </TouchableOpacity>
+    </DoubleClick>
   )
 }
 

@@ -91,7 +91,7 @@ interface IProps {
 
 interface IState {
   isLoading: boolean
-  currentKyo: KYO
+  currentKyo: KYO | null
   selectedTechnique?: string | undefined
 }
 
@@ -106,10 +106,9 @@ const GokyoScreen = ({
   const isLandscape = orientation === 'landscape'
   const [state, setState] = useState<IState>({
     isLoading: false,
-    currentKyo: 'GO',
+    currentKyo: null,
   })
   const allKyoWazaTerms = Array.from(techniqueInfo.kyoWazaTerms)
-  const techniqueNames = techniqueInfo.wazaForKyo(state.currentKyo)
 
   useEffect(() => {
     setStateFromParams()
@@ -121,7 +120,7 @@ const GokyoScreen = ({
 
     dismissKeyboard()
     if (params) {
-      const currentKyo: KYO = selectedTechnique
+      const currentKyo: KYO | null = selectedTechnique
         ? techniqueInfo.kyoForKyoWazaTerm(selectedTechnique)
         : state.currentKyo
       setState({
@@ -132,16 +131,17 @@ const GokyoScreen = ({
     } else {
       setState({
         ...state,
-        currentKyo: 'GO',
+        currentKyo: null,
         selectedTechnique: undefined,
       })
     }
   }
 
   const onPressKyoButton = (kyo: KYO) => {
+    const isCurrentKyo = kyo === state.currentKyo
     setState({
       ...state,
-      currentKyo: kyo,
+      currentKyo: isCurrentKyo ? null : kyo,
     })
   }
 
@@ -194,6 +194,7 @@ const GokyoScreen = ({
       return null
     }
     const { name, displayName, translation, kyo } = article
+    const isInactive = state.currentKyo && state.currentKyo !== kyo
 
     const purchaseHandler = new PurchaseHandler(
       VIDEO_PRODUCT,
@@ -220,7 +221,13 @@ const GokyoScreen = ({
         onPress={() => purchaseHandler.conditionalPlay()}
         key={techniqueName}
         renderKyoIndicator
-        kyo={kyo}
+        containerStyles={isInactive ? { opacity: 0.5 } : {}}
+        onDoubleTap={() => {
+          if (!isInactive) {
+            return
+          }
+          setState({ ...state, currentKyo: null })
+        }}
       />
     )
   }
@@ -237,10 +244,10 @@ const GokyoScreen = ({
     )
   }
 
-  const splitTechniqueNames = (techniqueNames: string[]): any => {
+  const splitTechniqueNames = (): any => {
     const techniqueNamesLeft: String[] = []
     const techniqueNamesRight: String[] = []
-    techniqueNames.forEach((techniqueName, index) => {
+    allKyoWazaTerms.forEach((techniqueName, index) => {
       if (index % 2 === 0) {
         techniqueNamesLeft.push(techniqueName)
       } else {
@@ -251,9 +258,7 @@ const GokyoScreen = ({
   }
 
   const renderLandscapeBody = () => {
-    const { techniqueNamesLeft, techniqueNamesRight } = splitTechniqueNames(
-      techniqueNames
-    )
+    const { techniqueNamesLeft, techniqueNamesRight } = splitTechniqueNames()
     return (
       <View style={[{ flexDirection: 'row' }]}>
         <View style={[styles.techniqueList, { flex: 0.5 }]}>
