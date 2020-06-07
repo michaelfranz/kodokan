@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   ImageBackground,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  FlatList,
 } from 'react-native'
 import withScreenLayout from '../common/withScreenLayout'
 import { H3 } from '../common/text'
@@ -16,7 +17,6 @@ import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
 import { videoMap } from '../data/VideoInfo'
 import ArticleInfo from '../data/ArticleInfo'
 import PurchaseHandler from '../purchase/PurchaseHandler'
-import { FlatList } from 'react-native-gesture-handler'
 
 const BackgroundLandscape = require('../images/background2L.png')
 const BackgroundPortrait = require('../images/background2P.png')
@@ -62,12 +62,12 @@ const styles = StyleSheet.create({
   },
   kyoSelectorBar: {
     backgroundColor: 'transparent',
+    borderBottomColor: 'rgb(199,200,204)',
+    borderBottomWidth: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingLeft: 6,
-    paddingRight: 6,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
   },
   kyoSelectorText: {
     textAlign: 'center',
@@ -108,6 +108,8 @@ const GokyoScreen = ({
     isLoading: false,
     currentKyo: null,
   })
+
+  const ListEl = useRef<FlatList<any>>(null)
   const allKyoWazaTerms = Array.from(techniqueInfo.kyoWazaTerms)
 
   useEffect(() => {
@@ -139,6 +141,21 @@ const GokyoScreen = ({
 
   const onPressKyoButton = (kyo: KYO) => {
     const isCurrentKyo = kyo === state.currentKyo
+    if (!isCurrentKyo) {
+      const kyoFirstItemIndices = {
+        GO: 0,
+        YON: 8,
+        SAN: 16,
+        NI: 24,
+        IK: 32,
+      }
+      ListEl.current!.scrollToIndex({
+        index: isLandscape
+          ? kyoFirstItemIndices[kyo] / 2
+          : kyoFirstItemIndices[kyo],
+        animated: true,
+      })
+    }
     setState({
       ...state,
       currentKyo: isCurrentKyo ? null : kyo,
@@ -194,7 +211,7 @@ const GokyoScreen = ({
       return null
     }
     const { name, displayName, translation, kyo } = article
-    const isInactive = state.currentKyo && state.currentKyo !== kyo
+    const isInactive = state.currentKyo ? state.currentKyo !== kyo : false
 
     const purchaseHandler = new PurchaseHandler(
       VIDEO_PRODUCT,
@@ -222,6 +239,7 @@ const GokyoScreen = ({
         key={techniqueName}
         renderKyoIndicator
         containerStyles={isInactive ? { opacity: 0.5 } : {}}
+        disabled={isInactive}
         onDoubleTap={() => {
           if (!isInactive) {
             return
@@ -232,42 +250,18 @@ const GokyoScreen = ({
     )
   }
 
-  const renderPortraitBody = () => {
+  const renderList = () => {
     return (
       <FlatList
+        key={isLandscape ? 'landscapeList' : 'portraitList'}
+        numColumns={isLandscape ? 2 : 1}
+        ref={ListEl}
         style={styles.techniqueList}
         data={allKyoWazaTerms}
         renderItem={item => renderTechnique(item.item)}
         keyExtractor={item => item}
         extraData={state}
       />
-    )
-  }
-
-  const splitTechniqueNames = (): any => {
-    const techniqueNamesLeft: String[] = []
-    const techniqueNamesRight: String[] = []
-    allKyoWazaTerms.forEach((techniqueName, index) => {
-      if (index % 2 === 0) {
-        techniqueNamesLeft.push(techniqueName)
-      } else {
-        techniqueNamesRight.push(techniqueName)
-      }
-    })
-    return { techniqueNamesLeft, techniqueNamesRight }
-  }
-
-  const renderLandscapeBody = () => {
-    const { techniqueNamesLeft, techniqueNamesRight } = splitTechniqueNames()
-    return (
-      <View style={[{ flexDirection: 'row' }]}>
-        <View style={[styles.techniqueList, { flex: 0.5 }]}>
-          {techniqueNamesLeft.map(name => renderTechnique(name))}
-        </View>
-        <View style={[styles.techniqueList, { flex: 0.5 }]}>
-          {techniqueNamesRight.map(name => renderTechnique(name))}
-        </View>
-      </View>
     )
   }
 
@@ -285,7 +279,7 @@ const GokyoScreen = ({
         />
         <View style={styles.innerContainer}>
           {renderKyoSelector()}
-          {isLandscape ? renderLandscapeBody() : renderPortraitBody()}
+          {renderList()}
         </View>
       </SafeAreaView>
     </ImageBackground>

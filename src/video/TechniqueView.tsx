@@ -43,6 +43,7 @@ export interface IProps {
   techniqueName: string
   displayName: string
   isSelected: boolean
+  disabled?: boolean
   onPress: () => void
   onDoubleTap?: () => void
   translation: string
@@ -77,6 +78,7 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     renderKyoIndicator,
     containerStyles,
     onDoubleTap,
+    disabled,
   } = props
   const { isDownloaded } = state
 
@@ -128,47 +130,56 @@ const TechniqueView: React.FunctionComponent<IProps> = (
   if (!isDownloaded && !isOnline) {
     onPressAction = noNetworkAction
   }
+  if (disabled) {
+    onPressAction = () => {}
+  }
   return (
-    <DoubleClick singleTap={onPressAction} doubleTap={onDoubleTap}>
-      <View
-        style={[
-          styles.techniqueContainer,
-          isSelected ? { backgroundColor: 'rgba(255,0,0,0.3)' } : {},
-          containerStyles,
-        ]}
-      >
-        {renderKyoIndicator && (
-          <View
-            style={[styles.kyoIndicator, { backgroundColor: kyoColours[kyo] }]}
-          />
-        )}
-        <View style={styles.thumbnailContainer}>
-          {renderThumbnail(techniqueName)}
-        </View>
-        <View style={{ flex: 1 }}>
-          <H2 numberOfLines={2}>{techniqueName}</H2>
-          <H3 numberOfLines={1}>{translation}</H3>
-        </View>
+    <View style={{ flex: 1 }}>
+      <DoubleClick singleTap={onPressAction} doubleTap={onDoubleTap}>
         <View
-          style={{
-            alignItems: 'flex-start',
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-          }}
+          style={[
+            styles.techniqueContainer,
+            isSelected ? { backgroundColor: 'rgba(255,0,0,0.3)' } : {},
+            containerStyles,
+          ]}
         >
-          <DownloadStatusButton
-            isOnline={isOnline}
-            video={videoMap.get(techniqueName)}
-            onDownloadComplete={() =>
-              setState({
-                ...state,
-                isDownloaded: true,
-              })
-            }
-          />
+          {renderKyoIndicator && (
+            <View
+              style={[
+                styles.kyoIndicator,
+                { backgroundColor: kyoColours[kyo] },
+              ]}
+            />
+          )}
+          <View style={styles.thumbnailContainer}>
+            {renderThumbnail(techniqueName)}
+          </View>
+          <View style={{ flex: 1 }}>
+            <H2 numberOfLines={2}>{techniqueName}</H2>
+            <H3 numberOfLines={1}>{translation}</H3>
+          </View>
+          <View
+            style={{
+              alignItems: 'flex-start',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <DownloadStatusButton
+              isOnline={isOnline}
+              disabled={disabled}
+              video={videoMap.get(techniqueName)}
+              onDownloadComplete={() =>
+                setState({
+                  ...state,
+                  isDownloaded: true,
+                })
+              }
+            />
+          </View>
         </View>
-      </View>
-    </DoubleClick>
+      </DoubleClick>
+    </View>
   )
 }
 

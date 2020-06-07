@@ -28,6 +28,7 @@ interface IProps {
   video: Video | undefined
   isOnline: boolean | null
   onDownloadComplete: () => void
+  disabled?: boolean
 }
 
 interface IState {
@@ -40,6 +41,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
   video,
   isOnline,
   onDownloadComplete,
+  disabled,
 }): React.ReactElement => {
   const [state, setState] = useState<IState>({
     downloadedSize: 0,
@@ -183,6 +185,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
           style={{ alignItems: 'center' }}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           onPress={onDownloadButtonPress}
+          disabled={disabled}
         >
           {renderButtonElement()}
         </TouchableOpacity>
