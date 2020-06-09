@@ -1,4 +1,4 @@
-import Amplify, { Analytics } from 'aws-amplify'
+import Amplify from 'aws-amplify'
 import awsconfig from './aws-exports'
 import React, { useEffect } from 'react'
 import { Image, StyleSheet } from 'react-native'

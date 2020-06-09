@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   ImageBackground,
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  FlatList,
 } from 'react-native'
 import withScreenLayout from '../common/withScreenLayout'
 import { H3 } from '../common/text'
 import Spinner from 'react-native-loading-spinner-overlay'
-import { PRIMARY_COLOUR } from '../theme/colours'
+import { PRIMARY_COLOUR, GO, IK, NI, SAN, YON } from '../theme/colours'
 import TechniqueInfo from '../data/WazaInfo'
 import TechniqueView from '../video/TechniqueView'
 import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
@@ -39,19 +40,19 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   GO: {
-    backgroundColor: 'rgb(243,255,20)',
+    backgroundColor: GO,
   },
   IK: {
-    backgroundColor: 'rgb(220,58,13)',
+    backgroundColor: IK,
   },
   NI: {
-    backgroundColor: 'rgb(18,88,220)',
+    backgroundColor: NI,
   },
   SAN: {
-    backgroundColor: 'rgb(28,220,13)',
+    backgroundColor: SAN,
   },
   YON: {
-    backgroundColor: 'rgb(220,134,13)',
+    backgroundColor: YON,
   },
   kyoSelector: {
     borderRadius: 26,
@@ -61,12 +62,12 @@ const styles = StyleSheet.create({
   },
   kyoSelectorBar: {
     backgroundColor: 'transparent',
+    borderBottomColor: 'rgb(199,200,204)',
+    borderBottomWidth: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingLeft: 6,
-    paddingRight: 6,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
   },
   kyoSelectorText: {
     textAlign: 'center',
@@ -90,7 +91,7 @@ interface IProps {
 
 interface IState {
   isLoading: boolean
-  currentKyo: KYO
+  currentKyo: KYO | null
   selectedTechnique?: string | undefined
 }
 
@@ -105,9 +106,11 @@ const GokyoScreen = ({
   const isLandscape = orientation === 'landscape'
   const [state, setState] = useState<IState>({
     isLoading: false,
-    currentKyo: 'GO',
+    currentKyo: null,
   })
-  const techniqueNames = techniqueInfo.wazaForKyo(state.currentKyo)
+
+  const ListEl = useRef<FlatList<any>>(null)
+  const allKyoWazaTerms = Array.from(techniqueInfo.kyoWazaTerms)
 
   useEffect(() => {
     setStateFromParams()
@@ -119,7 +122,7 @@ const GokyoScreen = ({
 
     dismissKeyboard()
     if (params) {
-      const currentKyo: KYO = selectedTechnique
+      const currentKyo: KYO | null = selectedTechnique
         ? techniqueInfo.kyoForKyoWazaTerm(selectedTechnique)
         : state.currentKyo
       setState({
@@ -130,16 +133,32 @@ const GokyoScreen = ({
     } else {
       setState({
         ...state,
-        currentKyo: 'GO',
+        currentKyo: null,
         selectedTechnique: undefined,
       })
     }
   }
 
   const onPressKyoButton = (kyo: KYO) => {
+    const isCurrentKyo = kyo === state.currentKyo
+    if (!isCurrentKyo) {
+      const kyoFirstItemIndices = {
+        GO: 0,
+        YON: 8,
+        SAN: 16,
+        NI: 24,
+        IK: 32,
+      }
+      ListEl.current!.scrollToIndex({
+        index: isLandscape
+          ? kyoFirstItemIndices[kyo] / 2
+          : kyoFirstItemIndices[kyo],
+        animated: true,
+      })
+    }
     setState({
       ...state,
-      currentKyo: kyo,
+      currentKyo: isCurrentKyo ? null : kyo,
     })
   }
 
@@ -191,7 +210,8 @@ const GokyoScreen = ({
     if (!article) {
       return null
     }
-    const { name, displayName, translation } = article
+    const { name, displayName, translation, kyo } = article
+    const isInactive = state.currentKyo ? state.currentKyo !== kyo : false
 
     const purchaseHandler = new PurchaseHandler(
       VIDEO_PRODUCT,
@@ -215,46 +235,70 @@ const GokyoScreen = ({
         techniqueName={name}
         displayName={displayName}
         translation={translation}
-        onPress={() => purchaseHandler.conditionalPlay()}
+        onPress={() => {
+          if (isInactive) {
+            setState({ ...state, currentKyo: null })
+            return
+          }
+          purchaseHandler.conditionalPlay()
+        }}
         key={techniqueName}
+        renderKyoIndicator
+        containerStyles={{
+          opacity: isInactive ? 0.5 : 1,
+          borderBottomColor: 'rgb(199,200,204)',
+          borderBottomWidth: isLandscape ? 0 : 1,
+        }}
+        disableDownload={isInactive}
       />
     )
   }
 
-  const renderPortraitBody = () => {
+  const splitItemsIntoChunks = (items: String[], chunkCount: number) => {
+    let index = 0
+    const newArray: Array<String[]> = []
+    while (index < items.length) {
+      const chunk = items.slice(index, index + chunkCount)
+      newArray.push(chunk)
+      index += chunkCount
+    }
+
+    return newArray
+  }
+
+  const renderTechniqueRow = row => {
     return (
-      <View style={styles.techniqueList}>
-        {techniqueNames.map(name => renderTechnique(name))}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          borderBottomColor: 'rgb(199,200,204)',
+          borderBottomWidth: 1,
+        }}
+      >
+        {row.item.map(technique => renderTechnique(technique))}
       </View>
     )
   }
 
-  const splitTechniqueNames = (techniqueNames: string[]): any => {
-    const techniqueNamesLeft: String[] = []
-    const techniqueNamesRight: String[] = []
-    techniqueNames.forEach((techniqueName, index) => {
-      if (index % 2 === 0) {
-        techniqueNamesLeft.push(techniqueName)
-      } else {
-        techniqueNamesRight.push(techniqueName)
-      }
-    })
-    return { techniqueNamesLeft, techniqueNamesRight }
-  }
+  const renderList = () => {
+    const data = isLandscape
+      ? splitItemsIntoChunks(allKyoWazaTerms, 2)
+      : allKyoWazaTerms
 
-  const renderLandscapeBody = () => {
-    const { techniqueNamesLeft, techniqueNamesRight } = splitTechniqueNames(
-      techniqueNames
-    )
     return (
-      <View style={[{ flexDirection: 'row' }]}>
-        <View style={[styles.techniqueList, { flex: 0.5 }]}>
-          {techniqueNamesLeft.map(name => renderTechnique(name))}
-        </View>
-        <View style={[styles.techniqueList, { flex: 0.5 }]}>
-          {techniqueNamesRight.map(name => renderTechnique(name))}
-        </View>
-      </View>
+      <FlatList
+        key={isLandscape ? 'landscapeList' : 'portraitList'}
+        numColumns={1}
+        ref={ListEl}
+        style={styles.techniqueList}
+        data={data}
+        renderItem={item =>
+          isLandscape ? renderTechniqueRow(item) : renderTechnique(item.item)
+        }
+        keyExtractor={item => item}
+        extraData={state}
+      />
     )
   }
 
@@ -272,7 +316,7 @@ const GokyoScreen = ({
         />
         <View style={styles.innerContainer}>
           {renderKyoSelector()}
-          {isLandscape ? renderLandscapeBody() : renderPortraitBody()}
+          {renderList()}
         </View>
       </SafeAreaView>
     </ImageBackground>

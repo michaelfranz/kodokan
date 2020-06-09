@@ -28,6 +28,7 @@ interface IProps {
   video: Video | undefined
   isOnline: boolean | null
   onDownloadComplete: () => void
+  disabled?: boolean
 }
 
 interface IState {
@@ -40,6 +41,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
   video,
   isOnline,
   onDownloadComplete,
+  disabled,
 }): React.ReactElement => {
   const [state, setState] = useState<IState>({
     downloadedSize: 0,
@@ -183,6 +185,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
           style={{ alignItems: 'center' }}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           onPress={onDownloadButtonPress}
+          disabled={disabled}
         >
           {renderButtonElement()}
         </TouchableOpacity>
@@ -199,7 +202,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     return (
       <ProgressCircle
         percent={downloadedPercentage()}
-        radius={12}
+        radius={14}
         borderWidth={2}
         color={INFO_COLOUR}
         shadowColor={BACKGROUND_COLOUR}
@@ -222,7 +225,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     return (
       <Ionicons
         name="md-checkmark-circle"
-        size={20}
+        size={24}
         color={FOREGROUND_COLOUR_ALT}
       />
     )
@@ -232,7 +235,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
     return (
       <Ionicons
         name="ios-cloud-download"
-        size={20}
+        size={24}
         color={FOREGROUND_COLOUR_ALT}
       />
     )
@@ -240,7 +243,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
 
   const renderOfflineNotDownloadedElement = () => {
     return (
-      <Ionicons name="ios-warning" size={20} color={FOREGROUND_COLOUR_ALT} />
+      <Ionicons name="ios-warning" size={24} color={FOREGROUND_COLOUR_ALT} />
     )
   }
 

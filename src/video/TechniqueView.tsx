@@ -1,26 +1,44 @@
 import React, { useState, useEffect } from 'react'
-import { View, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Alert,
+  Image,
+  StyleProp,
+  ViewStyle,
+} from 'react-native'
 import { videoMap } from '../data/VideoInfo'
-import { H3, Text } from '../common/text'
+import { H2, Text } from '../common/text'
 import { strings } from '../locales/i18n'
 import DownloadStatusButton from './DownloadStatusButton'
+import { kyoColours } from '../data/WazaInfo'
+import TechniqueInfo from '../data/WazaInfo'
+import { TouchableOpacity } from 'react-native'
 
 const styles = StyleSheet.create({
   techniqueContainer: {
-    backgroundColor: 'transparent',
     borderBottomColor: 'rgb(199,200,204)',
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
   },
   thumbnailContainer: {
     paddingRight: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   thumbnailImage: {
-    height: 40,
-    width: 60,
+    height: 69,
+    width: 110,
+    marginRight: 3,
+  },
+  kyoIndicator: {
+    width: 8,
+    height: 69,
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
   },
 })
 
@@ -28,9 +46,12 @@ export interface IProps {
   techniqueName: string
   displayName: string
   isSelected: boolean
+  disableDownload?: boolean
   onPress: () => void
   translation: string
   isOnline: boolean | null
+  renderKyoIndicator?: boolean
+  containerStyles?: StyleProp<ViewStyle>
 }
 
 interface IState {
@@ -50,8 +71,20 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     isMounted: true,
   })
 
-  const { techniqueName, translation, onPress, isSelected, isOnline } = props
+  const {
+    techniqueName,
+    translation,
+    onPress,
+    isSelected,
+    isOnline,
+    renderKyoIndicator,
+    containerStyles,
+    disableDownload,
+  } = props
   const { isDownloaded } = state
+
+  const techniqueInfo = TechniqueInfo.getInstance()
+  const kyo = techniqueInfo.kyoForKyoWazaTerm(techniqueName)
 
   useEffect(() => {
     setStateFromProps()
@@ -83,7 +116,15 @@ const TechniqueView: React.FunctionComponent<IProps> = (
       return null // should render placeholder image
     }
     const path = video.thumbnail as any
-    return <Image source={path} style={styles.thumbnailImage} />
+    const roundedCornersStyle = renderKyoIndicator
+      ? { borderTopRightRadius: 4, borderBottomRightRadius: 4 }
+      : { borderRadius: 4 }
+    return (
+      <Image
+        source={path}
+        style={[styles.thumbnailImage, roundedCornersStyle]}
+      />
+    )
   }
 
   let onPressAction = onPress
@@ -91,44 +132,54 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     onPressAction = noNetworkAction
   }
   return (
-    <TouchableOpacity
-      style={[
-        styles.techniqueContainer,
-        isSelected ? { backgroundColor: 'rgba(255,0,0,0.3)' } : {},
-      ]}
-      onPress={onPressAction}
-    >
-      <View style={[styles.thumbnailContainer, { width: 62 }]}>
-        {renderThumbnail(techniqueName)}
-      </View>
-      <View
-        style={{
-          flex: 6,
-        }}
-      >
-        <H3 numberOfLines={1}>{techniqueName}</H3>
-        <Text numberOfLines={1}>{translation}</Text>
-      </View>
-      <View
-        style={{
-          alignItems: 'center',
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <DownloadStatusButton
-          isOnline={isOnline}
-          video={videoMap.get(techniqueName)}
-          onDownloadComplete={() =>
-            setState({
-              ...state,
-              isDownloaded: true,
-            })
-          }
-        />
-      </View>
-    </TouchableOpacity>
+    <View style={{ flex: 1 }}>
+      <TouchableOpacity onPress={onPressAction}>
+        <View
+          style={[
+            styles.techniqueContainer,
+            isSelected ? { backgroundColor: 'rgba(255,0,0,0.3)' } : {},
+            containerStyles,
+          ]}
+        >
+          <View style={styles.thumbnailContainer}>
+            {renderKyoIndicator && (
+              <View
+                style={[
+                  styles.kyoIndicator,
+                  { backgroundColor: kyoColours[kyo] },
+                ]}
+              />
+            )}
+            {renderThumbnail(techniqueName)}
+          </View>
+          <View style={{ flex: 1 }}>
+            <H2 numberOfLines={2} style={{ marginBottom: 5 }}>
+              {techniqueName}
+            </H2>
+            <Text numberOfLines={2}>{translation}</Text>
+          </View>
+          <View
+            style={{
+              alignItems: 'flex-start',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <DownloadStatusButton
+              isOnline={isOnline}
+              disabled={disableDownload}
+              video={videoMap.get(techniqueName)}
+              onDownloadComplete={() =>
+                setState({
+                  ...state,
+                  isDownloaded: true,
+                })
+              }
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
+    </View>
   )
 }
 
