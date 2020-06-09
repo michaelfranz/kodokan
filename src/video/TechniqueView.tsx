@@ -14,6 +14,7 @@ import DownloadStatusButton from './DownloadStatusButton'
 import { kyoColours } from '../data/WazaInfo'
 import TechniqueInfo from '../data/WazaInfo'
 import DoubleClick from 'react-native-double-tap'
+import { TouchableOpacity } from 'react-native'
 
 const styles = StyleSheet.create({
   techniqueContainer: {
@@ -43,9 +44,8 @@ export interface IProps {
   techniqueName: string
   displayName: string
   isSelected: boolean
-  disabled?: boolean
+  disableDownload?: boolean
   onPress: () => void
-  onDoubleTap?: () => void
   translation: string
   isOnline: boolean | null
   renderKyoIndicator?: boolean
@@ -77,8 +77,7 @@ const TechniqueView: React.FunctionComponent<IProps> = (
     isOnline,
     renderKyoIndicator,
     containerStyles,
-    onDoubleTap,
-    disabled,
+    disableDownload,
   } = props
   const { isDownloaded } = state
 
@@ -130,12 +129,9 @@ const TechniqueView: React.FunctionComponent<IProps> = (
   if (!isDownloaded && !isOnline) {
     onPressAction = noNetworkAction
   }
-  if (disabled) {
-    onPressAction = () => {}
-  }
   return (
     <View style={{ flex: 1 }}>
-      <DoubleClick singleTap={onPressAction} doubleTap={onDoubleTap}>
+      <TouchableOpacity onPress={onPressAction}>
         <View
           style={[
             styles.techniqueContainer,
@@ -167,7 +163,7 @@ const TechniqueView: React.FunctionComponent<IProps> = (
           >
             <DownloadStatusButton
               isOnline={isOnline}
-              disabled={disabled}
+              disabled={disableDownload}
               video={videoMap.get(techniqueName)}
               onDownloadComplete={() =>
                 setState({
@@ -178,7 +174,7 @@ const TechniqueView: React.FunctionComponent<IProps> = (
             />
           </View>
         </View>
-      </DoubleClick>
+      </TouchableOpacity>
     </View>
   )
 }

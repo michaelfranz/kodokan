@@ -235,18 +235,17 @@ const GokyoScreen = ({
         techniqueName={name}
         displayName={displayName}
         translation={translation}
-        onPress={() => purchaseHandler.conditionalPlay()}
+        onPress={() => {
+          if (isInactive) {
+            setState({ ...state, currentKyo: null })
+            return
+          }
+          purchaseHandler.conditionalPlay()
+        }}
         key={techniqueName}
         renderKyoIndicator
         containerStyles={isInactive ? { opacity: 0.5 } : {}}
-        disabled={isInactive}
-        onDoubleTap={() => {
-          if (!isInactive) {
-            return
-          }
-          setState({ ...state, currentKyo: null })
-          purchaseHandler.conditionalPlay()
-        }}
+        disableDownload={isInactive}
       />
     )
   }
