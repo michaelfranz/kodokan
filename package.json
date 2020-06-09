@@ -22,7 +22,6 @@
     "react-native": "0.61.5",
     "react-native-device-info": "^5.5.3",
     "react-native-dismiss-keyboard": "^1.0.0",
-    "react-native-double-tap": "^1.0.1",
     "react-native-elements": "^1.2.7",
     "react-native-fs": "^2.16.4",
     "react-native-gesture-handler": "1.5.2",

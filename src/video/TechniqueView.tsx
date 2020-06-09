@@ -13,7 +13,6 @@ import { strings } from '../locales/i18n'
 import DownloadStatusButton from './DownloadStatusButton'
 import { kyoColours } from '../data/WazaInfo'
 import TechniqueInfo from '../data/WazaInfo'
-import DoubleClick from 'react-native-double-tap'
 import { TouchableOpacity } from 'react-native'
 
 const styles = StyleSheet.create({
