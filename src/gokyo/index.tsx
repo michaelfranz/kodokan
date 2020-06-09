@@ -244,21 +244,58 @@ const GokyoScreen = ({
         }}
         key={techniqueName}
         renderKyoIndicator
-        containerStyles={isInactive ? { opacity: 0.5 } : {}}
+        containerStyles={{
+          opacity: isInactive ? 0.5 : 1,
+          borderBottomColor: 'rgb(199,200,204)',
+          borderBottomWidth: isLandscape ? 0 : 1,
+        }}
         disableDownload={isInactive}
       />
     )
   }
 
+  const splitItemsIntoChunks = (items: String[], chunkCount: number) => {
+    let index = 0
+    const newArray: Array<String[]> = []
+    while (index < items.length) {
+      const chunk = items.slice(index, index + chunkCount)
+      newArray.push(chunk)
+      index += chunkCount
+    }
+
+    return newArray
+  }
+
+  const renderTechniqueRow = row => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          borderBottomColor: 'rgb(199,200,204)',
+          borderBottomWidth: 1,
+        }}
+      >
+        {row.item.map(technique => renderTechnique(technique))}
+      </View>
+    )
+  }
+
   const renderList = () => {
+    const data = isLandscape
+      ? splitItemsIntoChunks(allKyoWazaTerms, 2)
+      : allKyoWazaTerms
+
     return (
       <FlatList
         key={isLandscape ? 'landscapeList' : 'portraitList'}
-        numColumns={isLandscape ? 2 : 1}
+        numColumns={1}
         ref={ListEl}
         style={styles.techniqueList}
-        data={allKyoWazaTerms}
-        renderItem={item => renderTechnique(item.item)}
+        data={data}
+        renderItem={item =>
+          isLandscape ? renderTechniqueRow(item) : renderTechnique(item.item)
+        }
         keyExtractor={item => item}
         extraData={state}
       />

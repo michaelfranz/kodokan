@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import { videoMap } from '../data/VideoInfo'
-import { H2, H3 } from '../common/text'
+import { H2, Text } from '../common/text'
 import { strings } from '../locales/i18n'
 import DownloadStatusButton from './DownloadStatusButton'
 import { kyoColours } from '../data/WazaInfo'
@@ -26,6 +26,8 @@ const styles = StyleSheet.create({
   },
   thumbnailContainer: {
     paddingRight: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   thumbnailImage: {
     height: 69,
@@ -34,6 +36,7 @@ const styles = StyleSheet.create({
   },
   kyoIndicator: {
     width: 8,
+    height: 69,
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
   },
@@ -138,20 +141,22 @@ const TechniqueView: React.FunctionComponent<IProps> = (
             containerStyles,
           ]}
         >
-          {renderKyoIndicator && (
-            <View
-              style={[
-                styles.kyoIndicator,
-                { backgroundColor: kyoColours[kyo] },
-              ]}
-            />
-          )}
           <View style={styles.thumbnailContainer}>
+            {renderKyoIndicator && (
+              <View
+                style={[
+                  styles.kyoIndicator,
+                  { backgroundColor: kyoColours[kyo] },
+                ]}
+              />
+            )}
             {renderThumbnail(techniqueName)}
           </View>
           <View style={{ flex: 1 }}>
-            <H2 numberOfLines={2}>{techniqueName}</H2>
-            <H3 numberOfLines={1}>{translation}</H3>
+            <H2 numberOfLines={2} style={{ marginBottom: 5 }}>
+              {techniqueName}
+            </H2>
+            <Text numberOfLines={2}>{translation}</Text>
           </View>
           <View
             style={{
