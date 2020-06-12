@@ -142,23 +142,27 @@ const GokyoScreen = ({
   const onPressKyoButton = (kyo: KYO) => {
     const isCurrentKyo = kyo === state.currentKyo
     if (!isCurrentKyo) {
-      const kyoFirstItemIndices = {
-        GO: 0,
-        YON: 8,
-        SAN: 16,
-        NI: 24,
-        IK: 32,
-      }
-      ListEl.current!.scrollToIndex({
-        index: isLandscape
-          ? kyoFirstItemIndices[kyo] / 2
-          : kyoFirstItemIndices[kyo],
-        animated: true,
-      })
+      scrollToSelectedKyoFirstItem(kyo)
     }
     setState({
       ...state,
       currentKyo: isCurrentKyo ? null : kyo,
+    })
+  }
+
+  const scrollToSelectedKyoFirstItem = (kyo: KYO): void => {
+    const kyoFirstItemIndices = {
+      GO: 0,
+      YON: 8,
+      SAN: 16,
+      NI: 24,
+      IK: 32,
+    }
+    ListEl.current!.scrollToIndex({
+      index: isLandscape
+        ? kyoFirstItemIndices[kyo] / 2
+        : kyoFirstItemIndices[kyo],
+      animated: true,
     })
   }
 
