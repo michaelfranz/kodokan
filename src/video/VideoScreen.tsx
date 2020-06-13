@@ -137,6 +137,13 @@ class VideoScreen extends React.Component<Props, IState> {
     })
   }
 
+  private callOnGoBackIfExists = () => {
+    const { params = {} } = this.props.navigation.state
+    if (params.onGoBack) {
+      params.onGoBack()
+    }
+  }
+
   private stopVideo = () => {
     if (this.state.controlsDisabled) {
       return
@@ -147,6 +154,7 @@ class VideoScreen extends React.Component<Props, IState> {
       },
       () => {
         this.props.navigation.goBack(null)
+        this.callOnGoBackIfExists()
       }
     )
   }
@@ -161,6 +169,7 @@ class VideoScreen extends React.Component<Props, IState> {
   private onEnd = () => {
     const { navigation } = this.props
     navigation.goBack(null)
+    this.callOnGoBackIfExists()
   }
 }
 
