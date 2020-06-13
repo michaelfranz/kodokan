@@ -103,7 +103,11 @@ const GokyoScreen = ({
   orientation,
   navigation,
 }): React.ReactElement<IProps> => {
-  const isLandscape = orientation === 'landscape'
+  const getOrientation = (): string => {
+    return orientation
+  }
+  const isLandscape = getOrientation() === 'landscape'
+
   const [state, setState] = useState<IState>({
     isLoading: false,
     currentKyo: null,
@@ -205,9 +209,11 @@ const GokyoScreen = ({
     const { navigate } = navigation
     navigate('VideoScreen', {
       uri,
-      onGoBack: () => {
+      onGoBack: ({ orientation }) => {
         const index = allKyoWazaTerms.indexOf(techniqueName)
-        scrollListToIndex(isLandscape ? Math.floor(index / 2) : index)
+        scrollListToIndex(
+          orientation === 'landscape' ? Math.floor(index / 2) : index
+        )
       },
     })
   }

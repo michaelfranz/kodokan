@@ -140,7 +140,7 @@ class VideoScreen extends React.Component<Props, IState> {
   private callOnGoBackIfExists = () => {
     const { params = {} } = this.props.navigation.state
     if (params.onGoBack) {
-      params.onGoBack()
+      params.onGoBack({ orientation: this.props.orientation })
     }
   }
 
