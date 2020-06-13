@@ -142,7 +142,17 @@ const GokyoScreen = ({
   const onPressKyoButton = (kyo: KYO) => {
     const isCurrentKyo = kyo === state.currentKyo
     if (!isCurrentKyo) {
-      scrollToSelectedKyoFirstItem(kyo)
+      const kyoFirstItemIndices = {
+        GO: 0,
+        YON: 8,
+        SAN: 16,
+        NI: 24,
+        IK: 32,
+      }
+      const index = isLandscape
+        ? kyoFirstItemIndices[kyo] / 2
+        : kyoFirstItemIndices[kyo]
+      scrollListToIndex(index)
     }
     setState({
       ...state,
@@ -150,18 +160,9 @@ const GokyoScreen = ({
     })
   }
 
-  const scrollToSelectedKyoFirstItem = (kyo: KYO): void => {
-    const kyoFirstItemIndices = {
-      GO: 0,
-      YON: 8,
-      SAN: 16,
-      NI: 24,
-      IK: 32,
-    }
+  const scrollListToIndex = (index: number): void => {
     ListEl.current!.scrollToIndex({
-      index: isLandscape
-        ? kyoFirstItemIndices[kyo] / 2
-        : kyoFirstItemIndices[kyo],
+      index,
       animated: true,
     })
   }
@@ -197,12 +198,18 @@ const GokyoScreen = ({
     )
   }
 
-  const showVideoScreen = uri => {
+  const showVideoScreen = (uri: string, techniqueName: string) => {
     setState({
       ...state,
     })
     const { navigate } = navigation
-    navigate('VideoScreen', { uri })
+    navigate('VideoScreen', {
+      uri,
+      onGoBack: () => {
+        const index = allKyoWazaTerms.indexOf(techniqueName)
+        scrollListToIndex(isLandscape ? Math.floor(index / 2) : index)
+      },
+    })
   }
 
   const longRunningOpCallback = (longOpIsRunning: boolean) => {
@@ -226,7 +233,7 @@ const GokyoScreen = ({
         })
         const video = videoMap.get(techniqueName)
         video!.uri().then(result => {
-          showVideoScreen(result)
+          showVideoScreen(result, techniqueName)
         })
       },
       longRunningOpCallback
@@ -289,7 +296,6 @@ const GokyoScreen = ({
     const data = isLandscape
       ? splitItemsIntoChunks(allKyoWazaTerms, 2)
       : allKyoWazaTerms
-
     return (
       <FlatList
         key={isLandscape ? 'landscapeList' : 'portraitList'}
