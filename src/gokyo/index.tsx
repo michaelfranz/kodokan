@@ -103,10 +103,7 @@ const GokyoScreen = ({
   orientation,
   navigation,
 }): React.ReactElement<IProps> => {
-  const getOrientation = (): string => {
-    return orientation
-  }
-  const isLandscape = getOrientation() === 'landscape'
+  const isLandscape = orientation === 'landscape'
 
   const [state, setState] = useState<IState>({
     isLoading: false,
@@ -115,10 +112,24 @@ const GokyoScreen = ({
 
   const ListEl = useRef<FlatList<any>>(null)
   const allKyoWazaTerms = Array.from(techniqueInfo.kyoWazaTerms)
+  let rotateDeviceTimeOutHandler: number | null = null
 
   useEffect(() => {
     setStateFromParams()
   }, [])
+
+  useEffect(() => {
+    if (state.currentKyo) {
+      const index = getKyoFirstItemIndex(state.currentKyo)
+      if (rotateDeviceTimeOutHandler) {
+        clearTimeout(rotateDeviceTimeOutHandler)
+      }
+      rotateDeviceTimeOutHandler = setTimeout(() => {
+        scrollListToIndex(index)
+        rotateDeviceTimeOutHandler && clearTimeout(rotateDeviceTimeOutHandler)
+      }, 300)
+    }
+  }, [orientation])
 
   const setStateFromParams = () => {
     const { params = {} } = navigation.state
@@ -143,19 +154,21 @@ const GokyoScreen = ({
     }
   }
 
+  const getKyoFirstItemIndex = (kyo: KYO) => {
+    const kyoFirstItemIndices = {
+      GO: 0,
+      YON: 8,
+      SAN: 16,
+      NI: 24,
+      IK: 32,
+    }
+    return isLandscape ? kyoFirstItemIndices[kyo] / 2 : kyoFirstItemIndices[kyo]
+  }
+
   const onPressKyoButton = (kyo: KYO) => {
     const isCurrentKyo = kyo === state.currentKyo
     if (!isCurrentKyo) {
-      const kyoFirstItemIndices = {
-        GO: 0,
-        YON: 8,
-        SAN: 16,
-        NI: 24,
-        IK: 32,
-      }
-      const index = isLandscape
-        ? kyoFirstItemIndices[kyo] / 2
-        : kyoFirstItemIndices[kyo]
+      const index = getKyoFirstItemIndex(kyo)
       scrollListToIndex(index)
     }
     setState({
