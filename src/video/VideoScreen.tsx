@@ -26,24 +26,24 @@ const styles = StyleSheet.create({
   controlPanel: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignSelf: 'flex-start',
+    position: 'absolute',
+    top: 0,
+    width: '100%',
   },
   fullScreen: {
     flex: 1,
     width: '100%',
     position: 'relative',
     flexDirection: 'column',
-    backgroundColor: 'red',
-  },
-  video: {
-    alignSelf: 'center',
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 0,
+  },
+  video: {
+    alignSelf: 'center',
+    backgroundColor: 'transparent',
+    width: '100%',
   },
 })
 
@@ -88,8 +88,6 @@ class VideoScreen extends React.Component<Props, IState> {
     if (!videoURI) {
       return null
     }
-
-    const isLandscape = this.props.orientation === 'landscape'
     return (
       <View style={styles.fullScreen}>
         <StatusBar hidden={true} />
@@ -97,9 +95,9 @@ class VideoScreen extends React.Component<Props, IState> {
           onEnd={this.onEnd}
           fullscreen={true}
           paused={paused}
-          resizeMode={isLandscape ? 'stretch' : 'content'}
+          resizeMode="contain"
           source={{ uri: videoURI }}
-          style={styles.video}
+          style={[styles.video, { aspectRatio: 1 }]}
           ref={ref => {
             this.player = ref
           }}
@@ -139,6 +137,13 @@ class VideoScreen extends React.Component<Props, IState> {
     })
   }
 
+  private callOnGoBackIfExists = () => {
+    const { params = {} } = this.props.navigation.state
+    if (params.onGoBack) {
+      params.onGoBack({ orientation: this.props.orientation })
+    }
+  }
+
   private stopVideo = () => {
     if (this.state.controlsDisabled) {
       return
@@ -149,6 +154,7 @@ class VideoScreen extends React.Component<Props, IState> {
       },
       () => {
         this.props.navigation.goBack(null)
+        this.callOnGoBackIfExists()
       }
     )
   }
@@ -161,7 +167,9 @@ class VideoScreen extends React.Component<Props, IState> {
   }
 
   private onEnd = () => {
-    this.props.navigation.goBack(null)
+    const { navigation } = this.props
+    navigation.goBack(null)
+    this.callOnGoBackIfExists()
   }
 }
 

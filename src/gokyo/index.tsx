@@ -104,6 +104,7 @@ const GokyoScreen = ({
   navigation,
 }): React.ReactElement<IProps> => {
   const isLandscape = orientation === 'landscape'
+
   const [state, setState] = useState<IState>({
     isLoading: false,
     currentKyo: null,
@@ -111,10 +112,24 @@ const GokyoScreen = ({
 
   const ListEl = useRef<FlatList<any>>(null)
   const allKyoWazaTerms = Array.from(techniqueInfo.kyoWazaTerms)
+  let rotateDeviceTimeOutHandler: number | null = null
 
   useEffect(() => {
     setStateFromParams()
   }, [])
+
+  useEffect(() => {
+    if (state.currentKyo) {
+      const index = getKyoFirstItemIndex(state.currentKyo)
+      if (rotateDeviceTimeOutHandler) {
+        clearTimeout(rotateDeviceTimeOutHandler)
+      }
+      rotateDeviceTimeOutHandler = setTimeout(() => {
+        scrollListToIndex(index)
+        rotateDeviceTimeOutHandler && clearTimeout(rotateDeviceTimeOutHandler)
+      }, 300)
+    }
+  }, [orientation])
 
   const setStateFromParams = () => {
     const { params = {} } = navigation.state
@@ -139,26 +154,33 @@ const GokyoScreen = ({
     }
   }
 
+  const getKyoFirstItemIndex = (kyo: KYO) => {
+    const kyoFirstItemIndices = {
+      GO: 0,
+      YON: 8,
+      SAN: 16,
+      NI: 24,
+      IK: 32,
+    }
+    return isLandscape ? kyoFirstItemIndices[kyo] / 2 : kyoFirstItemIndices[kyo]
+  }
+
   const onPressKyoButton = (kyo: KYO) => {
     const isCurrentKyo = kyo === state.currentKyo
     if (!isCurrentKyo) {
-      const kyoFirstItemIndices = {
-        GO: 0,
-        YON: 8,
-        SAN: 16,
-        NI: 24,
-        IK: 32,
-      }
-      ListEl.current!.scrollToIndex({
-        index: isLandscape
-          ? kyoFirstItemIndices[kyo] / 2
-          : kyoFirstItemIndices[kyo],
-        animated: true,
-      })
+      const index = getKyoFirstItemIndex(kyo)
+      scrollListToIndex(index)
     }
     setState({
       ...state,
       currentKyo: isCurrentKyo ? null : kyo,
+    })
+  }
+
+  const scrollListToIndex = (index: number): void => {
+    ListEl.current!.scrollToIndex({
+      index,
+      animated: true,
     })
   }
 
@@ -193,12 +215,20 @@ const GokyoScreen = ({
     )
   }
 
-  const showVideoScreen = uri => {
+  const showVideoScreen = (uri: string, techniqueName: string) => {
     setState({
       ...state,
     })
     const { navigate } = navigation
-    navigate('VideoScreen', { uri })
+    navigate('VideoScreen', {
+      uri,
+      onGoBack: ({ orientation }) => {
+        const index = allKyoWazaTerms.indexOf(techniqueName)
+        scrollListToIndex(
+          orientation === 'landscape' ? Math.floor(index / 2) : index
+        )
+      },
+    })
   }
 
   const longRunningOpCallback = (longOpIsRunning: boolean) => {
@@ -222,7 +252,7 @@ const GokyoScreen = ({
         })
         const video = videoMap.get(techniqueName)
         video!.uri().then(result => {
-          showVideoScreen(result)
+          showVideoScreen(result, techniqueName)
         })
       },
       longRunningOpCallback
@@ -285,7 +315,6 @@ const GokyoScreen = ({
     const data = isLandscape
       ? splitItemsIntoChunks(allKyoWazaTerms, 2)
       : allKyoWazaTerms
-
     return (
       <FlatList
         key={isLandscape ? 'landscapeList' : 'portraitList'}
