@@ -6,7 +6,7 @@ const giHotspotsFront: Hotspot[] = [
   new Hotspot('Hidari-Yoko-Eri', 60, 17),
   new Hotspot('Migi-Yoko-Eri', 40, 17),
   new Hotspot('Hidari-Mae-Eri', 55, 23),
-  new Hotspot('Migi-Mae-Eri', 46, 23),
+  new Hotspot('Migi-Mae-Eri', 44, 23),
   new Hotspot('Hidari-Sotonaka-Sode', 78, 37),
   new Hotspot('Migi-Sotonaka-Sode', 20, 37),
   new Hotspot('Hidari-Sodeguchi', 86, 50),
@@ -20,8 +20,8 @@ const giHotspotsFront: Hotspot[] = [
 ]
 
 const giHotspotsBack: Hotspot[] = [
-  new Hotspot('Ushiro-Eri', 100, 61),
-  new Hotspot('Ushiro-Obi', 105, 171),
+  new Hotspot('Ushiro-Eri', 43, 15),
+  new Hotspot('Ushiro-Obi', 43, 42),
 ]
 
 export default class GiInfo {

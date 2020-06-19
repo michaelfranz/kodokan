@@ -9,10 +9,11 @@ import {
 } from 'react-native'
 import GiInfo, { baseImageDimensions } from '../data/GiInfo'
 import withScreenLayout from '../common/withScreenLayout'
+import Icon from 'react-native-vector-icons/FontAwesome'
 import Hotspot from '../data/Hotspot'
 import ArticleInfo from '../data/ArticleInfo'
 import { SafeAreaView, AnimatedValue } from 'react-navigation'
-import { PRIMARY_COLOUR } from '../theme/colours'
+import { PRIMARY_COLOUR, FOREGROUND_COLOUR } from '../theme/colours'
 import { H3, H2 } from '../common/text'
 
 const ImageBack = require('../images/hanspi-back.png')
@@ -22,6 +23,16 @@ const styles = StyleSheet.create({
   hotspotsContainer: {
     position: 'relative',
     zIndex: 123,
+  },
+  screenTop: {
+    flexDirection: 'row',
+    height: 55,
+    width: '100%',
+    alignItems: 'center',
+  },
+  rotateButton: {
+    paddingHorizontal: 10,
+    marginRight: 10,
   },
   container: {
     backgroundColor: 'black',
@@ -45,8 +56,7 @@ const styles = StyleSheet.create({
   techniqueContainer: {
     padding: 5,
     paddingHorizontal: 20,
-    width: ' 100%',
-    minHeight: 55,
+    flex: 1,
   },
   techniqueContainerText: {
     color: 'white',
@@ -87,7 +97,16 @@ const GiScreen = (): React.ReactElement<IProps> => {
     }
   }, [state.term])
 
-  const hotspotRadius = state.imageHeight > 700 ? 10 : 6
+  useEffect(() => {
+    animatedHotspotValue.setValue(0)
+    setState({
+      ...state,
+      term: null,
+    })
+  }, [state.isFront])
+
+  const isBigRadius = state.imageHeight > 650
+  const hotspotRadius = isBigRadius ? 10 : 5
 
   const animateHotspots = () => {
     animatedHotspotValue.setValue(0)
@@ -151,19 +170,26 @@ const GiScreen = (): React.ReactElement<IProps> => {
       borderRadius = hotspotRadius
     }
 
+    const hitSlop = isBigRadius ? 12 : 6
+
     return (
       <View
         key={hotspot.term}
         style={{
           left,
-          opacity: 0.6,
+          opacity: 0.7,
           position: 'absolute',
           top,
           zIndex: 2,
         }}
       >
         <TouchableOpacity
-          hitSlop={{ top: 12, left: 12, bottom: 12, right: 12 }}
+          hitSlop={{
+            top: hitSlop,
+            left: hitSlop,
+            bottom: hitSlop,
+            right: hitSlop,
+          }}
           onPress={() => {
             show(hotspot.term)
           }}
@@ -254,9 +280,23 @@ const GiScreen = (): React.ReactElement<IProps> => {
     )
   }
 
+  const renderImageRotateButton = () => {
+    return (
+      <TouchableOpacity
+        style={styles.rotateButton}
+        onPress={() => setState({ ...state, isFront: !state.isFront })}
+      >
+        <Icon name="repeat" size={28} color="white" />
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      {renderTechniqueLabels()}
+      <View style={styles.screenTop}>
+        {renderTechniqueLabels()}
+        {renderImageRotateButton()}
+      </View>
       <View style={styles.innerContainer} onLayout={onImageContainerLayout}>
         <Image
           source={state.isFront ? ImageFront : ImageBack}
