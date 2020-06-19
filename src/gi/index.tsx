@@ -1,20 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   View,
   Image,
   StyleSheet,
-  Dimensions,
   Easing,
   TouchableOpacity,
+  Animated,
 } from 'react-native'
 import GiInfo, { baseImageDimensions } from '../data/GiInfo'
 import withScreenLayout from '../common/withScreenLayout'
 import Hotspot from '../data/Hotspot'
-import Animated from 'react-native-reanimated'
 import ArticleInfo from '../data/ArticleInfo'
-import { SafeAreaView } from 'react-navigation'
+import { SafeAreaView, AnimatedValue } from 'react-navigation'
 import { PRIMARY_COLOUR } from '../theme/colours'
-import { Text, H3, H2 } from '../common/text'
+import { H3, H2 } from '../common/text'
 
 const ImageBack = require('../images/hanspi-back.png')
 const ImageFront = require('../images/hanspi-front.png')
@@ -76,21 +75,41 @@ const GiScreen = (): React.ReactElement<IProps> => {
     term: null,
   })
 
-  const animatedHotspotValue = new Animated.Value(0)
-  const animatedOpacityValue = new Animated.Value(0)
+  const animatedOpacityValue = useRef<AnimatedValue>(new Animated.Value(0))
+    .current
+
+  const animatedHotspotValue = useRef<AnimatedValue>(new Animated.Value(0))
+    .current
+
+  useEffect(() => {
+    if (state.term) {
+      animateHotspots()
+    }
+  }, [state.term])
 
   const hotspotRadius = state.imageHeight > 700 ? 10 : 6
 
-  const imageMargin = (sx: number) => {
-    // Distance between left border and image
-    const dimensions = Dimensions.get('window')
-    const windowWidth = dimensions.width
-    return Math.max(windowWidth - baseImageDimensions.width * sx, 0) / 2
+  const animateHotspots = () => {
+    animatedHotspotValue.setValue(0)
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(animatedHotspotValue, {
+          duration: 800,
+          easing: Easing.linear,
+          toValue: 0,
+        }),
+        Animated.timing(animatedHotspotValue, {
+          duration: 800,
+          easing: Easing.linear,
+          toValue: 1,
+        }),
+      ])
+    ).start()
   }
 
   const renderHotspot = (hotspot: Hotspot) => {
     const { imageHeight, imageWidth } = state
-    const highlighted = false
+    const highlighted = hotspot.term === state.term
 
     const left = (hotspot.x / 100) * imageWidth
     const top = (hotspot.y / 100) * imageHeight
@@ -132,17 +151,12 @@ const GiScreen = (): React.ReactElement<IProps> => {
       borderRadius = hotspotRadius
     }
 
-    // The following component hierarchy may seem over-complicated. However it is a work-around for what appears to
-    // be a bug: That child elements of TouchableOpacity to not respond correctly on iOS hardware if said child has
-    // absolute positioning. Placing the absolute positioning in an enclosing parent view overcomes the problem.
-    // See: https://github.com/facebook/react-native/issues/13845
-    // At the time of writing this problem is manifest on RN 0.51
     return (
       <View
         key={hotspot.term}
         style={{
           left,
-          opacity: 10,
+          opacity: 0.6,
           position: 'absolute',
           top,
           zIndex: 2,
@@ -154,7 +168,7 @@ const GiScreen = (): React.ReactElement<IProps> => {
             show(hotspot.term)
           }}
         >
-          <View
+          <Animated.View
             style={{
               backgroundColor: PRIMARY_COLOUR,
               borderRadius,
@@ -172,16 +186,16 @@ const GiScreen = (): React.ReactElement<IProps> => {
   const fadeOutCurrentTerm = (callback: () => void) => {
     animatedOpacityValue.setValue(1)
     Animated.timing(animatedOpacityValue, {
-      duration: state.term ? 500 : 0, // no delay if current term undefined
-      easing: Easing.linear,
       toValue: 0,
+      easing: Easing.linear,
+      duration: state.term ? 300 : 0, // no delay if current term undefined
     }).start(callback)
   }
 
   const fadeInNewTerm = () => {
     animatedOpacityValue.setValue(0)
     Animated.timing(animatedOpacityValue, {
-      duration: 500,
+      duration: 300,
       easing: Easing.linear,
       toValue: 1,
     }).start()
@@ -192,9 +206,15 @@ const GiScreen = (): React.ReactElement<IProps> => {
       return
     }
     if (giInfo.isGiTerm(term)) {
-      setState({
-        ...state,
-        term,
+      fadeOutCurrentTerm(() => {
+        animatedHotspotValue.setValue(0)
+        setState({
+          ...state,
+          term,
+        })
+        setTimeout(() => {
+          fadeInNewTerm()
+        }, 300)
       })
     }
   }
@@ -218,13 +238,19 @@ const GiScreen = (): React.ReactElement<IProps> => {
   const renderTechniqueLabels = () => {
     const { term } = state
     const article = ArticleInfo.articleForTerm(term || '')
+
+    const opacity = animatedOpacityValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    })
+
     return (
-      <View style={[styles.techniqueContainer]}>
+      <Animated.View style={[styles.techniqueContainer, { opacity }]}>
         <H2 style={styles.techniqueContainerText}>{term}</H2>
         {article && (
           <H3 style={styles.techniqueContainerText}>{article.translation}</H3>
         )}
-      </View>
+      </Animated.View>
     )
   }
 
