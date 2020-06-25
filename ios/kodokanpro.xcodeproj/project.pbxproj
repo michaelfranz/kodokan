@@ -42,9 +42,9 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "kodokanpro-tvOS";
 		};
-		8786C95324A49734007E0019 /* PBXContainerItemProxy */ = {
+		87AC52D824A49C510038009E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8786C94F24A49734007E0019 /* RNReactNativeHapticFeedback.xcodeproj */;
+			containerPortal = 87AC52D424A49C510038009E /* RNReactNativeHapticFeedback.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNReactNativeHapticFeedback;
@@ -74,7 +74,7 @@
 		7ACE4BED3490413E98D9F137 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Light.ttf"; path = "../assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; };
 		7BA169EF3AD725E6F87317E2 /* libPods-kodokanpro-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kodokanpro-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8786C94724A491EF007E0019 /* libRNReactNativeHapticFeedback.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNReactNativeHapticFeedback.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		8786C94F24A49734007E0019 /* RNReactNativeHapticFeedback.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNReactNativeHapticFeedback.xcodeproj; path = "../node_modules/react-native-haptic-feedback/ios/RNReactNativeHapticFeedback.xcodeproj"; sourceTree = "<group>"; };
+		87AC52D424A49C510038009E /* RNReactNativeHapticFeedback.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNReactNativeHapticFeedback.xcodeproj; path = "../node_modules/react-native-haptic-feedback/ios/RNReactNativeHapticFeedback.xcodeproj"; sourceTree = "<group>"; };
 		87CA433023D0418200ECAE02 /* kodokanpro-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "kodokanpro-Bridging-Header.h"; sourceTree = "<group>"; };
 		87CA433123D0418200ECAE02 /* dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dummy.swift; sourceTree = "<group>"; };
 		8AB7F9A9B0BB37F10CBF7861 /* Pods-kodokanpro-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kodokanpro-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-kodokanpro-tvOS/Pods-kodokanpro-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -173,7 +173,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				8786C94F24A49734007E0019 /* RNReactNativeHapticFeedback.xcodeproj */,
+				87AC52D424A49C510038009E /* RNReactNativeHapticFeedback.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -207,10 +207,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8786C95024A49734007E0019 /* Products */ = {
+		87AC52D524A49C510038009E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8786C95424A49734007E0019 /* libRNReactNativeHapticFeedback.a */,
+				87AC52D924A49C510038009E /* libRNReactNativeHapticFeedback.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -368,8 +368,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 8786C95024A49734007E0019 /* Products */;
-					ProjectRef = 8786C94F24A49734007E0019 /* RNReactNativeHapticFeedback.xcodeproj */;
+					ProductGroup = 87AC52D524A49C510038009E /* Products */;
+					ProjectRef = 87AC52D424A49C510038009E /* RNReactNativeHapticFeedback.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -383,11 +383,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		8786C95424A49734007E0019 /* libRNReactNativeHapticFeedback.a */ = {
+		87AC52D924A49C510038009E /* libRNReactNativeHapticFeedback.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRNReactNativeHapticFeedback.a;
-			remoteRef = 8786C95324A49734007E0019 /* PBXContainerItemProxy */;
+			remoteRef = 87AC52D824A49C510038009E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
