@@ -13,7 +13,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import Hotspot from '../data/Hotspot'
 import ArticleInfo from '../data/ArticleInfo'
 import { SafeAreaView, AnimatedValue } from 'react-navigation'
-import { PRIMARY_COLOUR, FOREGROUND_COLOUR } from '../theme/colours'
+import { PRIMARY_COLOUR } from '../theme/colours'
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback'
 import { H3, H2 } from '../common/text'
 
 const ImageBack = require('../images/hanspi-back.png')
@@ -192,6 +193,10 @@ const GiScreen = (): React.ReactElement<IProps> => {
           }}
           onPress={() => {
             show(hotspot.term)
+            ReactNativeHapticFeedback.trigger('impactMedium', {
+              enableVibrateFallback: true,
+              ignoreAndroidSystemSettings: false,
+            })
           }}
         >
           <Animated.View

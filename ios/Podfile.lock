@@ -240,6 +240,8 @@ PODS:
     - React
   - RNI18n (2.0.15):
     - React
+  - RNReactNativeHapticFeedback (1.10.0):
+    - React
   - RNReanimated (1.4.0):
     - React
   - RNScreens (2.0.0-alpha.15):
@@ -286,6 +288,7 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNI18n (from `../node_modules/react-native-i18n`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -364,6 +367,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNI18n:
     :path: "../node_modules/react-native-i18n"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -409,11 +414,12 @@ SPEC CHECKSUMS:
   RNFS: 90d1a32d3bc8f75cc7fc3dd2f67506049664346b
   RNGestureHandler: 946a7691e41df61e2c4b1884deab41a4cdc3afff
   RNI18n: e2f7e76389fcc6e84f2c8733ea89b92502351fd8
+  RNReactNativeHapticFeedback: 22c5ecf474428766c6b148f96f2ff6155cd7225e
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 055721f56f831d17a20d84b613dc0ca9a50e3fcd
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 6a97bee3792105ca243ae3d46d7abd7909edd97b
+PODFILE CHECKSUM: e9ba5bd2d09a83d2524e166f437d3de75e08afb3
 
 COCOAPODS: 1.9.3

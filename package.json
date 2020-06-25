@@ -25,6 +25,7 @@
     "react-native-elements": "^1.2.7",
     "react-native-fs": "^2.16.4",
     "react-native-gesture-handler": "1.5.2",
+    "react-native-haptic-feedback": "^1.10.0",
     "react-native-hyperlink": "0.0.16",
     "react-native-i18n": "2.0.15",
     "react-native-in-app-utils": "6.0.2",
