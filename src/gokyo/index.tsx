@@ -92,7 +92,7 @@ interface IProps {
 interface IState {
   isLoading: boolean
   currentKyo: KYO | null
-  selectedTechnique: string | undefined
+  selectedTechnique: string | null
 }
 
 type KYO = string
@@ -108,7 +108,7 @@ const GokyoScreen = ({
   const [state, setState] = useState<IState>({
     isLoading: false,
     currentKyo: null,
-    selectedTechnique: undefined,
+    selectedTechnique: null,
   })
 
   const ListEl = useRef<FlatList<any>>(null)
@@ -176,7 +176,7 @@ const GokyoScreen = ({
       setState({
         ...state,
         currentKyo: null,
-        selectedTechnique: undefined,
+        selectedTechnique: null,
       })
     }
   }
@@ -200,6 +200,7 @@ const GokyoScreen = ({
     }
     setState({
       ...state,
+      selectedTechnique: null,
       currentKyo: isCurrentKyo ? null : kyo,
     })
   }
@@ -260,6 +261,7 @@ const GokyoScreen = ({
   const showVideoScreen = (uri: string, techniqueName: string) => {
     setState({
       ...state,
+      selectedTechnique: null,
     })
     const { navigate } = navigation
     navigate('VideoScreen', {
@@ -305,8 +307,12 @@ const GokyoScreen = ({
         displayName={displayName}
         translation={translation}
         onPress={() => {
+          setState({
+            ...state,
+            selectedTechnique: null,
+          })
           if (isInactive) {
-            setState({ ...state, currentKyo: null })
+            setState({ ...state, currentKyo: null, selectedTechnique: null })
             return
           }
           purchaseHandler.conditionalPlay()
@@ -353,7 +359,7 @@ const GokyoScreen = ({
         keyExtractor={item => item}
         extraData={state}
         onScrollToIndexFailed={info => {
-          const wait = new Promise(resolve => setTimeout(resolve, 500))
+          const wait = new Promise(resolve => setTimeout(resolve, 300))
           wait.then(() => {
             scrollListToIndex(info.index)
           })
