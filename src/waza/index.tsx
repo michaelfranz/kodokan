@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   SafeAreaView,
   ImageBackground,
@@ -65,6 +65,9 @@ const WazaScreen = ({
   const [state, setState] = useState<IState>({})
 
   const techniqueInfo = TechniqueInfo.getInstance()
+  const ListEl = useRef<FlatList<any>>(null)
+
+  const data = techniqueInfo.wazaClassifications()
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('didFocus', () => {
@@ -83,6 +86,22 @@ const WazaScreen = ({
       showDetails(state.classification)
     }
   }, [state.selectedTechnique])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (state.classification) {
+        const index = data.indexOf(state.classification)
+        scrollListToIndex(index)
+      }
+    }, 200)
+  }, [state.classification])
+
+  const scrollListToIndex = (index: number): void => {
+    ListEl.current!.scrollToIndex({
+      index,
+      animated: true,
+    })
+  }
 
   const setStateFromParams = () => {
     const { params = {} } = navigation.state
@@ -161,11 +180,18 @@ const WazaScreen = ({
       <SafeAreaView style={styles.container}>
         <View style={styles.innerContainer}>
           <FlatList
+            ref={ListEl}
             style={styles.wazaClassificationList}
-            data={techniqueInfo.wazaClassifications()}
+            data={data}
             renderItem={renderItem}
             keyExtractor={item => item}
             extraData={state}
+            onScrollToIndexFailed={info => {
+              const wait = new Promise(resolve => setTimeout(resolve, 300))
+              wait.then(() => {
+                scrollListToIndex(info.index)
+              })
+            }}
           />
         </View>
       </SafeAreaView>
