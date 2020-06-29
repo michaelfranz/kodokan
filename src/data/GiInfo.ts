@@ -1,54 +1,55 @@
 import Hotspot from './Hotspot'
 
-const baseImageDimensions: any = {width: 240, height: 410}
+const baseImageDimensions: any = { width: 980, height: 1674 }
 
 const giHotspotsFront: Hotspot[] = [
-    new Hotspot('Hidari-Yoko-Eri', 141, 67),
-    new Hotspot('Migi-Yoko-Eri', 97, 67),
-    new Hotspot('Hidari-Mae-Eri', 130, 95),
-    new Hotspot('Migi-Mae-Eri', 108, 95),
-    new Hotspot('Hidari-Sotonaka-Sode', 184, 145),
-    new Hotspot('Migi-Sotonaka-Sode', 39, 145),
-    new Hotspot('Hidari-Sodeguchi', 205, 205),
-    new Hotspot('Migi-Sodeguchi', 20, 200),
-    new Hotspot('Mae-Obi', 117, 190),
-    new Hotspot('Hidari-Yoko-Obi', 153, 178),
-    new Hotspot('Migi-Yoko-Obi', 79, 178),
-    new Hotspot('Hidari-Susoguchi', 174, 374),
-    new Hotspot('Migi-Susoguchi', 59, 374),
-    new Hotspot('Suso', 117, 224),
+  new Hotspot('Hidari-Yoko-Eri', 60, 17),
+  new Hotspot('Migi-Yoko-Eri', 40, 17),
+  new Hotspot('Hidari-Mae-Eri', 55, 23),
+  new Hotspot('Migi-Mae-Eri', 44, 23),
+  new Hotspot('Hidari-Sotonaka-Sode', 78, 37),
+  new Hotspot('Migi-Sotonaka-Sode', 20, 37),
+  new Hotspot('Hidari-Sodeguchi', 86, 50),
+  new Hotspot('Migi-Sodeguchi', 7, 49),
+  new Hotspot('Mae-Obi', 50, 46),
+  new Hotspot('Hidari-Yoko-Obi', 64, 43),
+  new Hotspot('Migi-Yoko-Obi', 36, 43),
+  new Hotspot('Hidari-Susoguchi', 73, 90),
+  new Hotspot('Migi-Susoguchi', 24, 89),
+  new Hotspot('Suso', 48, 56),
 ]
 
 const giHotspotsBack: Hotspot[] = [
-    new Hotspot('Ushiro-Eri', 100, 61),
-    new Hotspot('Ushiro-Obi', 105, 171),
+  new Hotspot('Ushiro-Eri', 43, 15),
+  new Hotspot('Ushiro-Obi', 43, 42),
 ]
 
 export default class GiInfo {
-    public static getInstance() {
-        if (!GiInfo.instance) {
-            GiInfo.instance = new GiInfo()
-        }
-        return GiInfo.instance
+  public static getInstance() {
+    if (!GiInfo.instance) {
+      GiInfo.instance = new GiInfo()
     }
+    return GiInfo.instance
+  }
 
-    private static instance: GiInfo
+  private static instance: GiInfo
 
-    private allGiHotspotNames = new Set<string>()
+  private allGiHotspotNames = new Set<string>()
 
-    private constructor() {
-        // Initialise all 'gi' hotpot names
-        giHotspotsFront.forEach(hotspot => this.allGiHotspotNames.add(hotspot.term))
-        giHotspotsBack.forEach(hotspot => this.allGiHotspotNames.add(hotspot.term))
-    }
+  private constructor() {
+    // Initialise all 'gi' hotpot names
+    giHotspotsFront.forEach(hotspot => this.allGiHotspotNames.add(hotspot.term))
+    giHotspotsBack.forEach(hotspot => this.allGiHotspotNames.add(hotspot.term))
+  }
 
-    public isGiTerm = (term: string) => this.allGiHotspotNames.has(term)
+  public isGiTerm = (term: string) => this.allGiHotspotNames.has(term)
 
-    public isFrontGiTerm = (term: string) => giHotspotsFront.findIndex(hotspot => hotspot.term === term) > -1
+  public isFrontGiTerm = (term: string) =>
+    giHotspotsFront.findIndex(hotspot => hotspot.term === term) > -1
 
-    public hotspots(front: boolean = true) {
-        return front ? giHotspotsFront : giHotspotsBack
-    }
+  public hotspots(front: boolean = true) {
+    return front ? giHotspotsFront : giHotspotsBack
+  }
 }
 
-export {baseImageDimensions}
+export { baseImageDimensions }
