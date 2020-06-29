@@ -92,7 +92,7 @@ interface IProps {
 interface IState {
   isLoading: boolean
   currentKyo: KYO | null
-  selectedTechnique?: string | undefined
+  selectedTechnique: string | undefined
 }
 
 type KYO = string
@@ -108,15 +108,41 @@ const GokyoScreen = ({
   const [state, setState] = useState<IState>({
     isLoading: false,
     currentKyo: null,
+    selectedTechnique: undefined,
   })
 
   const ListEl = useRef<FlatList<any>>(null)
   const allKyoWazaTerms = Array.from(techniqueInfo.kyoWazaTerms)
+
+  const splitItemsIntoChunks = (items: String[], chunkCount: number) => {
+    let index = 0
+    const newArray: Array<String[]> = []
+    while (index < items.length) {
+      const chunk = items.slice(index, index + chunkCount)
+      newArray.push(chunk)
+      index += chunkCount
+    }
+
+    return newArray
+  }
+
+  const data = isLandscape
+    ? splitItemsIntoChunks(allKyoWazaTerms, 2)
+    : allKyoWazaTerms
+
   let rotateDeviceTimeOutHandler: number | null = null
 
   useEffect(() => {
     setStateFromParams()
-  }, [])
+  }, [navigation.state.params])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (state.selectedTechnique) {
+        scrollToTechnique(state.selectedTechnique, orientation)
+      }
+    }, 200)
+  }, [state.selectedTechnique, orientation])
 
   useEffect(() => {
     if (state.currentKyo) {
@@ -133,13 +159,14 @@ const GokyoScreen = ({
 
   const setStateFromParams = () => {
     const { params = {} } = navigation.state
-    const { selectedTechnique } = params
+    const { term: selectedTechnique } = params
 
     dismissKeyboard()
     if (params) {
       const currentKyo: KYO | null = selectedTechnique
         ? techniqueInfo.kyoForKyoWazaTerm(selectedTechnique)
         : state.currentKyo
+
       setState({
         ...state,
         currentKyo,
@@ -215,6 +242,16 @@ const GokyoScreen = ({
     )
   }
 
+  const scrollToTechnique = (
+    techniqueName: string,
+    orientation = 'landscape'
+  ) => {
+    const index = allKyoWazaTerms.indexOf(techniqueName)
+    scrollListToIndex(
+      orientation === 'landscape' ? Math.floor(index / 2) : index
+    )
+  }
+
   const showVideoScreen = (uri: string, techniqueName: string) => {
     setState({
       ...state,
@@ -223,10 +260,7 @@ const GokyoScreen = ({
     navigate('VideoScreen', {
       uri,
       onGoBack: ({ orientation }) => {
-        const index = allKyoWazaTerms.indexOf(techniqueName)
-        scrollListToIndex(
-          orientation === 'landscape' ? Math.floor(index / 2) : index
-        )
+        scrollToTechnique(techniqueName, orientation)
       },
     })
   }
@@ -284,18 +318,6 @@ const GokyoScreen = ({
     )
   }
 
-  const splitItemsIntoChunks = (items: String[], chunkCount: number) => {
-    let index = 0
-    const newArray: Array<String[]> = []
-    while (index < items.length) {
-      const chunk = items.slice(index, index + chunkCount)
-      newArray.push(chunk)
-      index += chunkCount
-    }
-
-    return newArray
-  }
-
   const renderTechniqueRow = row => {
     return (
       <View
@@ -312,9 +334,6 @@ const GokyoScreen = ({
   }
 
   const renderList = () => {
-    const data = isLandscape
-      ? splitItemsIntoChunks(allKyoWazaTerms, 2)
-      : allKyoWazaTerms
     return (
       <FlatList
         key={isLandscape ? 'landscapeList' : 'portraitList'}

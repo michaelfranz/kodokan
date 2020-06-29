@@ -51,10 +51,7 @@ const ArticleView = ({
   const isMounted = useIsMounted()
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
   const showScreen = (screen: string, term: string) => {
-    alert('no action for now')
     dismissKeyboard()
-    return
-
     const { navigate } = navigation
     navigate(screen, { term })
   }
