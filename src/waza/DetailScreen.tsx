@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { View, ImageBackground, StyleSheet, SafeAreaView } from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
+import {
+  View,
+  ImageBackground,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+} from 'react-native'
 import withScreenLayout from '../common/withScreenLayout'
 import TechniqueInfo from '../data/WazaInfo'
-import { FlatList } from 'react-native-gesture-handler'
 import ArticleInfo from '../data/ArticleInfo'
 import TechniqueView from '../video/TechniqueView'
 import PurchaseHandler from '../purchase/PurchaseHandler'
 import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
 import { videoMap } from '../data/VideoInfo'
+import waza from '.'
 
 interface IProps {
   navigation: any
@@ -60,9 +66,20 @@ const WazaDetailScreen = ({
     ? techniqueInfo.wazaForClassificationTerm(classification)
     : []
 
+  const ListEl = useRef<FlatList<any>>(null)
+
   useEffect(() => {
     setStateFromParams()
-  }, [])
+  }, [navigation.state.params])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (state.selectedTechnique) {
+        const index = wazaList.indexOf(state.selectedTechnique)
+        scrollListToIndex(index)
+      }
+    }, 200)
+  }, [state.selectedTechnique])
 
   const setStateFromParams = () => {
     const { params } = navigation.state
@@ -73,6 +90,13 @@ const WazaDetailScreen = ({
       ...state,
       classification,
       selectedTechnique,
+    })
+  }
+
+  const scrollListToIndex = (index: number): void => {
+    ListEl.current!.scrollToIndex({
+      index,
+      animated: true,
     })
   }
 
@@ -119,6 +143,10 @@ const WazaDetailScreen = ({
         techniqueName={name}
         translation={translation}
         onPress={() => {
+          setState({
+            ...state,
+            selectedTechnique: undefined,
+          })
           purchaseHandler.conditionalPlay()
         }}
         isOnline={isOnline}
@@ -135,11 +163,18 @@ const WazaDetailScreen = ({
       <SafeAreaView style={styles.container}>
         <View style={styles.innerContainer}>
           <FlatList
+            ref={ListEl}
             style={styles.wazaList}
             data={wazaList}
             renderItem={renderTechnique}
             keyExtractor={item => item}
             extraData={state}
+            onScrollToIndexFailed={info => {
+              const wait = new Promise(resolve => setTimeout(resolve, 300))
+              wait.then(() => {
+                scrollListToIndex(info.index)
+              })
+            }}
           />
         </View>
       </SafeAreaView>

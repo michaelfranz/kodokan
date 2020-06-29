@@ -50,6 +50,7 @@ const ArticleView = ({
 }: IProps): React.ReactElement<IProps> => {
   const isMounted = useIsMounted()
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
+
   const showScreen = (screen: string, term: string) => {
     dismissKeyboard()
     const { navigate } = navigation
@@ -116,7 +117,7 @@ const ArticleView = ({
   const gokyoButton = renderNaviButton(isGokyo, 'Gokyo', name, ImageDictGokyo)
   const wazaButton = renderNaviButton(
     isWaza || isWazaClassification,
-    'Waza',
+    'WazaClassificationScreen',
     name,
     ImageDictWaza
   )

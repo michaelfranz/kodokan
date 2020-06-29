@@ -131,6 +131,7 @@ const TechniqueView: React.FunctionComponent<IProps> = (
   if (!isDownloaded && !isOnline) {
     onPressAction = noNetworkAction
   }
+
   return (
     <View style={{ flex: 1 }}>
       <TouchableOpacity onPress={onPressAction}>
