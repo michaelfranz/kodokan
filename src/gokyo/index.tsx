@@ -242,14 +242,19 @@ const GokyoScreen = ({
     )
   }
 
+  const getTechniqueIndex = (
+    techniqueName: string,
+    orientation = 'landscape'
+  ): number => {
+    const index = allKyoWazaTerms.indexOf(techniqueName)
+    return orientation === 'landscape' ? Math.floor(index / 2) : index
+  }
+
   const scrollToTechnique = (
     techniqueName: string,
     orientation = 'landscape'
   ) => {
-    const index = allKyoWazaTerms.indexOf(techniqueName)
-    scrollListToIndex(
-      orientation === 'landscape' ? Math.floor(index / 2) : index
-    )
+    scrollListToIndex(getTechniqueIndex(techniqueName, orientation))
   }
 
   const showVideoScreen = (uri: string, techniqueName: string) => {
@@ -336,6 +341,7 @@ const GokyoScreen = ({
   const renderList = () => {
     return (
       <FlatList
+        initialScrollIndex={0}
         key={isLandscape ? 'landscapeList' : 'portraitList'}
         numColumns={1}
         ref={ListEl}
@@ -346,6 +352,12 @@ const GokyoScreen = ({
         }
         keyExtractor={item => item}
         extraData={state}
+        onScrollToIndexFailed={info => {
+          const wait = new Promise(resolve => setTimeout(resolve, 500))
+          wait.then(() => {
+            scrollListToIndex(info.index)
+          })
+        }}
       />
     )
   }
