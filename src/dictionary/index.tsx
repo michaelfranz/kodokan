@@ -1,4 +1,4 @@
-import Amplify, { Analytics } from 'aws-amplify'
+import { Analytics } from 'aws-amplify'
 import React, { useState, useEffect } from 'react'
 import {
   View,
@@ -299,7 +299,10 @@ const DictionaryScreen = ({
     return (
       <ArticleView
         article={item}
-        onPress={() => purchaseHandler.conditionalPlay()}
+        onPress={() => {
+          dismissKeyboard()
+          purchaseHandler.conditionalPlay()
+        }}
         navigation={navigation}
         onBookmarkToggle={isBookmarked => {
           if (!isBookmarked && dictionaryState.bookmarkDisplayMode) {
