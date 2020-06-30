@@ -64,7 +64,6 @@ const DictionaryNavigator = createStackNavigator({
       header: null,
     }),
   },
-  ...WazaNavigationScreens,
 })
 
 const MainNavigator = createBottomTabNavigator(

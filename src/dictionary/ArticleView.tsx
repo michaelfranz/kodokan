@@ -50,14 +50,14 @@ const ArticleView = ({
 }: IProps): React.ReactElement<IProps> => {
   const isMounted = useIsMounted()
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
-  const showScreen = (screen: string, term: string) => {
-    alert('no action for now')
-    dismissKeyboard()
-    return
 
+  const showScreen = (screen: string, term: string) => {
+    dismissKeyboard()
     const { navigate } = navigation
     navigate(screen, { term })
   }
+
+  const ICON_WIDTH = 32
 
   useEffect(() => {
     const term = article.name
@@ -76,14 +76,13 @@ const ArticleView = ({
   ) => {
     return show ? (
       <TouchableOpacity
-        style={{ paddingRight: 8 }}
+        key={screen}
+        style={{ width: ICON_WIDTH }}
         onPress={() => showScreen(screen, term)}
       >
         <Image source={image} />
       </TouchableOpacity>
-    ) : (
-      <Text />
-    )
+    ) : null
   }
 
   const toggleBookmark = async () => {
@@ -101,7 +100,7 @@ const ArticleView = ({
 
   const renderBookmarkButton = () => {
     return (
-      <TouchableOpacity onPress={toggleBookmark}>
+      <TouchableOpacity key="bookmark" onPress={toggleBookmark}>
         <Text style={{ margin: 8, fontSize: 15, textAlign: 'left' }}>
           <Icon
             name={isBookmarked ? 'bookmark' : 'bookmark-o'}
@@ -118,12 +117,19 @@ const ArticleView = ({
   const gokyoButton = renderNaviButton(isGokyo, 'Gokyo', name, ImageDictGokyo)
   const wazaButton = renderNaviButton(
     isWaza || isWazaClassification,
-    'Waza',
+    'WazaClassificationScreen',
     name,
     ImageDictWaza
   )
   const giButton = renderNaviButton(isGiTerm, 'Gi', name, ImageDictGi)
   const bookmarkButton = renderBookmarkButton()
+
+  const actionIcons = [
+    gokyoButton,
+    wazaButton,
+    giButton,
+    bookmarkButton,
+  ].filter(actionIcon => !!actionIcon)
 
   return (
     <View
@@ -139,27 +145,33 @@ const ArticleView = ({
       ]}
     >
       <TouchableOpacity
-        style={{ flexDirection: 'row', alignItems: 'center' }}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          flex: 1,
+          paddingRight: 5,
+        }}
         onPress={onPress}
       >
         <Icon name="volume-up" size={28} color={FOREGROUND_COLOUR} />
-        <View style={{ paddingLeft: 4 }}>
-          <H2 style={styles.techniqueNameText}>{article.displayName}</H2>
-          <Text style={styles.translationText}>{article.translation}</Text>
+        <View style={{ paddingLeft: 4, flex: 1 }}>
+          <H2 numberOfLines={1} style={styles.techniqueNameText}>
+            {article.displayName}
+          </H2>
+          <Text numberOfLines={1} style={styles.translationText}>
+            {article.translation}
+          </Text>
         </View>
       </TouchableOpacity>
       <View
         style={{
           alignItems: 'center',
-          flex: 1,
+          width: actionIcons.length * ICON_WIDTH,
           flexDirection: 'row',
           justifyContent: 'flex-end',
         }}
       >
-        {gokyoButton}
-        {wazaButton}
-        {giButton}
-        {bookmarkButton}
+        {actionIcons.map(actionIcon => actionIcon)}
       </View>
     </View>
   )

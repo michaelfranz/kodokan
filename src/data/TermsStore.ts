@@ -48,9 +48,9 @@ export default class TermsStore {
     return termOfTheDay
   }
 
-  public static async saveTermOfTheDayToPastTerms(term: string, date: string) {
+  public static async saveTermOfTheDayToPastTerms(name: string, date: string) {
     const storedData: ITermOfTheDayStore = await store.get(TERM_OF_THE_DAY_KEY)
-    const newEntry = { name: term, date }
+    const newEntry = { name, date }
     const newData = storedData
       ? [newEntry, ...storedData.pastTerms]
       : [newEntry]

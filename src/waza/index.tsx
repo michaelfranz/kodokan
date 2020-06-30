@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   SafeAreaView,
   ImageBackground,
@@ -15,7 +15,6 @@ import Color from 'color'
 
 const BackgroundPortrait = require('../images/background3P.png')
 const BackgroundLandscape = require('../images/background3L.png')
-const dismissKeyboard = require('react-native-dismiss-keyboard')
 
 const styles = StyleSheet.create({
   container: {
@@ -66,19 +65,46 @@ const WazaScreen = ({
   const [state, setState] = useState<IState>({})
 
   const techniqueInfo = TechniqueInfo.getInstance()
+  const ListEl = useRef<FlatList<any>>(null)
+
+  const data = techniqueInfo.wazaClassifications()
 
   useEffect(() => {
-    const { params } = navigation.state
-    setStateFromParams(params)
-  }, [])
+    const unsubscribe = navigation.addListener('didFocus', () => {
+      setStateFromParams()
+    })
 
-  useEffect(() => {
-    const { params } = navigation.state
-    setStateFromParams(params)
+    setStateFromParams()
+
+    return () => {
+      unsubscribe.remove()
+    }
   }, [navigation.state.params])
 
-  const setStateFromParams = params => {
-    dismissKeyboard()
+  useEffect(() => {
+    if (state.selectedTechnique && state.classification) {
+      showDetails(state.classification)
+    }
+  }, [state.selectedTechnique])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (state.classification) {
+        const index = data.indexOf(state.classification)
+        scrollListToIndex(index)
+      }
+    }, 200)
+  }, [state.classification])
+
+  const scrollListToIndex = (index: number): void => {
+    ListEl.current!.scrollToIndex({
+      index,
+      animated: true,
+    })
+  }
+
+  const setStateFromParams = () => {
+    const { params = {} } = navigation.state
     if (!params) {
       setState({
         classification: undefined,
@@ -98,11 +124,14 @@ const WazaScreen = ({
       const classification = techniqueInfo.classificationForWazaTerm(term)
       setState({
         classification,
-        selectedTechnique: term,
       })
-
-      const callback = () => showDetails(classification)
-      setTimeout(callback, 1000)
+      const callback = () => {
+        setState({
+          classification,
+          selectedTechnique: term,
+        })
+      }
+      setTimeout(callback, 700)
     }
   }
 
@@ -110,6 +139,7 @@ const WazaScreen = ({
     const { selectedTechnique } = state
     const selectedTechniqueCopy = selectedTechnique
     setState({ classification: undefined, selectedTechnique: undefined })
+    navigation.setParams({ term: null })
     navigation.navigate('WazaClassificationDetailScreen', {
       classification,
       selectedTechnique: selectedTechniqueCopy,
@@ -150,11 +180,18 @@ const WazaScreen = ({
       <SafeAreaView style={styles.container}>
         <View style={styles.innerContainer}>
           <FlatList
+            ref={ListEl}
             style={styles.wazaClassificationList}
-            data={techniqueInfo.wazaClassifications()}
+            data={data}
             renderItem={renderItem}
             keyExtractor={item => item}
             extraData={state}
+            onScrollToIndexFailed={info => {
+              const wait = new Promise(resolve => setTimeout(resolve, 300))
+              wait.then(() => {
+                scrollListToIndex(info.index)
+              })
+            }}
           />
         </View>
       </SafeAreaView>
