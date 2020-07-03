@@ -145,7 +145,7 @@ const DictionaryScreen = ({
   }
 
   const filterArticlesWithoutAudio = (articles: Article[]) => {
-    return articles.filter(article => {
+    return articles.filter((article) => {
       return articleAudio[article.name]
     })
   }
@@ -209,6 +209,7 @@ const DictionaryScreen = ({
             name: 'md-close',
           }}
           containerStyle={styles.searchBar}
+          inputContainerStyle={{ backgroundColor: BACKGROUND_COLOUR }}
           inputStyle={[styles.inputStyle, fontStyles.baseText]}
           placeholder={strings('Search')}
           style={styles.searchBar}
@@ -241,7 +242,7 @@ const DictionaryScreen = ({
     )
   }
 
-  const keyExtractor = item => item.name
+  const keyExtractor = (item) => item.name
 
   const playAudio = (name: string) => {
     const audioURI = articleAudio[name]
@@ -304,7 +305,7 @@ const DictionaryScreen = ({
           purchaseHandler.conditionalPlay()
         }}
         navigation={navigation}
-        onBookmarkToggle={isBookmarked => {
+        onBookmarkToggle={(isBookmarked) => {
           if (!isBookmarked && dictionaryState.bookmarkDisplayMode) {
             displayBookmarkedArticles()
           }
@@ -363,7 +364,7 @@ const DictionaryScreen = ({
         {!dictionaryState.bookmarkDisplayMode && !hasSearchText && (
           <SectionList
             sections={sections}
-            keyExtractor={(item, index) => item + index}
+            keyExtractor={keyExtractor}
             renderItem={({ item, section }) => {
               if (!item) {
                 return null

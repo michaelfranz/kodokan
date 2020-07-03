@@ -48,6 +48,7 @@ const WazaNavigationScreens = {
       headerStyle: {
         backgroundColor: BACKGROUND_COLOUR,
       },
+      headerBackTitle: 'Back',
     }),
     path: 'wazaClassificationDetail/:waza',
     screen: WazaDetailScreen,
