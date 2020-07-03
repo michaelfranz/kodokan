@@ -68,6 +68,10 @@ const styles = StyleSheet.create({
     flex: 4,
     opacity: 0.6,
   },
+  inputContainerStyle: {
+    backgroundColor: BACKGROUND_COLOUR,
+    opacity: 1,
+  },
   inputStyle: {
     backgroundColor: BACKGROUND_COLOUR,
     borderColor: 'rgb(199,200,204)',
@@ -209,7 +213,7 @@ const DictionaryScreen = ({
             name: 'md-close',
           }}
           containerStyle={styles.searchBar}
-          inputContainerStyle={{ backgroundColor: BACKGROUND_COLOUR }}
+          inputContainerStyle={styles.inputContainerStyle}
           inputStyle={[styles.inputStyle, fontStyles.baseText]}
           placeholder={strings('Search')}
           style={styles.searchBar}
