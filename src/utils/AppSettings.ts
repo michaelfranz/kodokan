@@ -1,38 +1,43 @@
-import { Settings } from 'react-native'
 import { getLanguages } from 'react-native-i18n'
+import store from 'react-native-simple-store'
 
-const supportedLanguages = ['de', 'en', 'fr', 'it', 'es', 'ja']
+const SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it', 'es', 'ja']
+const DICTIONARY_LANGUAGE_KEY = 'dictionaryLanguage'
+const DEFAULT_LANGUAGE = 'en'
 
 export default class AppSettings {
   public static async dictionaryLanguage() {
-    if (!AppSettings.cachedDictionaryLanguage) {
-      const dictionaryLanguageSetting = Settings.get('dictionaryLanguage')
-      if (
-        dictionaryLanguageSetting === undefined ||
-        'default' === dictionaryLanguageSetting
-      ) {
-        AppSettings.cachedDictionaryLanguage =
-          (await AppSettings.preferredSupportedLanguage()) || 'en' // fallback if can't support preferred language
-      } else {
-        AppSettings.cachedDictionaryLanguage = dictionaryLanguageSetting
-      }
+    const dictionaryLanguageSetting = await AppSettings.cachedDictionaryLanguage()
+    if (!dictionaryLanguageSetting || !dictionaryLanguageSetting.lang) {
+      const preferredLanguage = await AppSettings.preferredSupportedLanguage()
+      const languageToSave = preferredLanguage || DEFAULT_LANGUAGE
+      await AppSettings.saveDictionaryLanguage(languageToSave)
+      return languageToSave
     }
     return AppSettings.cachedDictionaryLanguage
   }
 
-  private static cachedDictionaryLanguage
+  private static async saveDictionaryLanguage(lang: string) {
+    return await store.update(DICTIONARY_LANGUAGE_KEY, {
+      lang,
+    })
+  }
+
+  private static async cachedDictionaryLanguage() {
+    return await store.get(DICTIONARY_LANGUAGE_KEY)
+  }
 
   private static async preferredSupportedLanguage() {
     const allLanguages = await getLanguages()
 
-    const preferredLanguages = allLanguages.map(locale =>
+    const preferredLanguages = allLanguages.map((locale) =>
       AppSettings.country(locale)
     )
     return preferredLanguages.find(AppSettings.isSupportedLanguage) // may return *undefined*
   }
 
   private static isSupportedLanguage(locale: string): boolean {
-    return supportedLanguages.includes(AppSettings.country(locale))
+    return SUPPORTED_LANGUAGES.includes(AppSettings.country(locale))
   }
 
   private static country(locale: string) {

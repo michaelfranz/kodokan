@@ -68,6 +68,10 @@ const styles = StyleSheet.create({
     flex: 4,
     opacity: 0.6,
   },
+  inputContainerStyle: {
+    backgroundColor: BACKGROUND_COLOUR,
+    opacity: 1,
+  },
   inputStyle: {
     backgroundColor: BACKGROUND_COLOUR,
     borderColor: 'rgb(199,200,204)',
@@ -145,7 +149,7 @@ const DictionaryScreen = ({
   }
 
   const filterArticlesWithoutAudio = (articles: Article[]) => {
-    return articles.filter(article => {
+    return articles.filter((article) => {
       return articleAudio[article.name]
     })
   }
@@ -209,6 +213,7 @@ const DictionaryScreen = ({
             name: 'md-close',
           }}
           containerStyle={styles.searchBar}
+          inputContainerStyle={styles.inputContainerStyle}
           inputStyle={[styles.inputStyle, fontStyles.baseText]}
           placeholder={strings('Search')}
           style={styles.searchBar}
@@ -241,7 +246,7 @@ const DictionaryScreen = ({
     )
   }
 
-  const keyExtractor = item => item.name
+  const keyExtractor = (item) => item.name
 
   const playAudio = (name: string) => {
     const audioURI = articleAudio[name]
@@ -304,7 +309,7 @@ const DictionaryScreen = ({
           purchaseHandler.conditionalPlay()
         }}
         navigation={navigation}
-        onBookmarkToggle={isBookmarked => {
+        onBookmarkToggle={(isBookmarked) => {
           if (!isBookmarked && dictionaryState.bookmarkDisplayMode) {
             displayBookmarkedArticles()
           }
@@ -363,7 +368,7 @@ const DictionaryScreen = ({
         {!dictionaryState.bookmarkDisplayMode && !hasSearchText && (
           <SectionList
             sections={sections}
-            keyExtractor={(item, index) => item + index}
+            keyExtractor={keyExtractor}
             renderItem={({ item, section }) => {
               if (!item) {
                 return null

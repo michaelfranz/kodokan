@@ -1,7 +1,7 @@
 import Amplify from 'aws-amplify'
 import awsconfig from './aws-exports'
 import React, { useEffect } from 'react'
-import { Image, StyleSheet } from 'react-native'
+import { Image, StyleSheet, YellowBox } from 'react-native'
 import SplashScreen from 'react-native-splash-screen'
 import { PRIMARY_COLOUR, BACKGROUND_COLOUR } from './theme/colours'
 import { createAppContainer } from 'react-navigation'
@@ -16,6 +16,15 @@ import WazaDetailScreen from './waza/DetailScreen'
 import { FONT_FAMILY_SUBHEADING } from './theme/type'
 import VideoScreen from './video/VideoScreen'
 
+/*
+these warnings are caused by packages in node_modules
+and i18n.getLanguages()
+*/
+YellowBox.ignoreWarnings([
+  'Require cycle: node_modules/',
+  'Please report: Excessive number',
+])
+
 Amplify.configure(awsconfig)
 
 const styles = StyleSheet.create({
@@ -29,7 +38,7 @@ const WazaNavigationScreens = {
   WazaClassificationScreen: {
     screen: WazaScreen,
     navigationOptions: () => ({
-      header: null,
+      headerShown: false,
     }),
   },
   WazaClassificationDetailScreen: {
@@ -39,6 +48,7 @@ const WazaNavigationScreens = {
       headerStyle: {
         backgroundColor: BACKGROUND_COLOUR,
       },
+      headerBackTitle: 'Back',
     }),
     path: 'wazaClassificationDetail/:waza',
     screen: WazaDetailScreen,
@@ -61,7 +71,7 @@ const DictionaryNavigator = createStackNavigator({
   DictionaryScreen: {
     screen: DictionaryScreen,
     navigationOptions: () => ({
-      header: null,
+      headerShown: false,
     }),
   },
 })

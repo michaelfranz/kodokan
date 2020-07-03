@@ -6906,14 +6906,13 @@ articleDictionary.set(
   })
 )
 
-const options: Fuse.FuseOptions = {
+const options: Fuse.IFuseOptions<{}> = {
   distance: 100,
   keys: ['name', 'search', 'synonym', 'translation'],
   location: 0,
-  maxPatternLength: 48,
   minMatchCharLength: 1,
   shouldSort: true,
-  threshold: 0.15,
+  threshold: 0,
 }
 
 export default class ArticleInfo {
@@ -6927,7 +6926,7 @@ export default class ArticleInfo {
 
   public static allArticlesExcept(terms: string[]): Article[] {
     return ArticleInfo.allArticles().filter(
-      article => terms.indexOf(article.name) === -1
+      (article) => terms.indexOf(article.name) === -1
     )
   }
 
@@ -6937,12 +6936,12 @@ export default class ArticleInfo {
 
   public static articlesMatchingSearchTerm(searchTerm: string): Article[] {
     const fuse = new Fuse(articleList, options)
-    return fuse.search(searchTerm)
+    return fuse.search(searchTerm).map(({ item }) => item)
   }
 
   public static articlesForTerms(terms: string[]) {
     const articles: Article[] = []
-    terms.forEach(term => {
+    terms.forEach((term) => {
       const article: Article | undefined = articleDictionary.get(term)
       if (article) {
         articles.push(article)
