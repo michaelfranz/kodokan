@@ -56,7 +56,7 @@ interface IState {
 class VideoScreen extends React.Component<Props, IState> {
   // noinspection JSUnusedGlobalSymbols
   public static navigationOptions = {
-    header: null,
+    headerShown: false,
   }
 
   // @ts-ignore
@@ -98,7 +98,7 @@ class VideoScreen extends React.Component<Props, IState> {
           resizeMode="contain"
           source={{ uri: videoURI }}
           style={[styles.video, { aspectRatio: 1 }]}
-          ref={ref => {
+          ref={(ref) => {
             this.player = ref
           }}
         />
@@ -132,7 +132,7 @@ class VideoScreen extends React.Component<Props, IState> {
     if (this.state.controlsDisabled) {
       return
     }
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return { paused: !prevState.paused, controlsDisabled: false }
     })
   }

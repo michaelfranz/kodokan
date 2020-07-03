@@ -1,7 +1,7 @@
 import Amplify from 'aws-amplify'
 import awsconfig from './aws-exports'
 import React, { useEffect } from 'react'
-import { Image, StyleSheet } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 import SplashScreen from 'react-native-splash-screen'
 import { PRIMARY_COLOUR, BACKGROUND_COLOUR } from './theme/colours'
 import { createAppContainer } from 'react-navigation'
@@ -29,7 +29,7 @@ const WazaNavigationScreens = {
   WazaClassificationScreen: {
     screen: WazaScreen,
     navigationOptions: () => ({
-      header: null,
+      headerShown: false,
     }),
   },
   WazaClassificationDetailScreen: {
@@ -61,7 +61,7 @@ const DictionaryNavigator = createStackNavigator({
   DictionaryScreen: {
     screen: DictionaryScreen,
     navigationOptions: () => ({
-      header: null,
+      headerShown: false,
     }),
   },
 })
