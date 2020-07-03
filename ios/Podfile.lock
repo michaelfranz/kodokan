@@ -184,11 +184,11 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-in-app-utils (6.0.2):
     - React
-  - react-native-netinfo (5.5.0):
+  - react-native-netinfo (5.9.4):
     - React
   - react-native-splash-screen (3.2.0):
     - React
-  - react-native-track-player (1.1.8):
+  - react-native-track-player (1.2.3):
     - React
   - react-native-video (5.0.2):
     - React
@@ -232,9 +232,9 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.5)
   - RNCAsyncStorage (1.6.3):
     - React
-  - RNDeviceInfo (5.5.3):
+  - RNDeviceInfo (5.6.1):
     - React
-  - RNFS (2.16.4):
+  - RNFS (2.16.6):
     - React
   - RNGestureHandler (1.5.2):
     - React
@@ -395,9 +395,9 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-in-app-utils: 07ea1df4bb6e8cbb27337d42a65ffe4cf7a35e97
-  react-native-netinfo: b84ff0cae1147315b5dc1daf0f65c0cc6ee71fb3
+  react-native-netinfo: cd479ab1b67cdd1cb1403a99ecdb24190a6dd7ef
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-track-player: 6e4e91a246efe7121cdef5a43258659a062499db
+  react-native-track-player: 28b96dd6404dea3eee80e67b74507679235a8dfb
   react-native-video: d01ed7ff1e38fa7dcc6c15c94cf505e661b7bfd0
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
@@ -410,8 +410,8 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   RNCAsyncStorage: 3c304d1adfaea02ec732ac218801cb13897aa8c0
-  RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
-  RNFS: 90d1a32d3bc8f75cc7fc3dd2f67506049664346b
+  RNDeviceInfo: b6e650fbd234732c759544218657d549b4339038
+  RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGestureHandler: 946a7691e41df61e2c4b1884deab41a4cdc3afff
   RNI18n: e2f7e76389fcc6e84f2c8733ea89b92502351fd8
   RNReactNativeHapticFeedback: 22c5ecf474428766c6b148f96f2ff6155cd7225e
@@ -420,6 +420,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: e9ba5bd2d09a83d2524e166f437d3de75e08afb3
+PODFILE CHECKSUM: 4463bcd5ea30c69c4b5f89d061d0d2d6f8c00fe1
 
 COCOAPODS: 1.9.3
