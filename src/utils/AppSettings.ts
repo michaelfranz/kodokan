@@ -10,8 +10,7 @@ export default class AppSettings {
     const dictionaryLanguageSetting = await AppSettings.cachedDictionaryLanguage()
     if (!dictionaryLanguageSetting || !dictionaryLanguageSetting.lang) {
       const preferredLanguage = await AppSettings.preferredSupportedLanguage()
-      // const languageToSave = preferredLanguage || DEFAULT_LANGUAGE
-      const languageToSave = 'de'
+      const languageToSave = preferredLanguage || DEFAULT_LANGUAGE
       await AppSettings.saveDictionaryLanguage(languageToSave)
       return languageToSave
     }
