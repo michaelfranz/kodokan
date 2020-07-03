@@ -40,6 +40,8 @@ target 'kodokanpro' do
 
   pod 'RNReactNativeHapticFeedback', :path => '../node_modules/react-native-haptic-feedback'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
   target 'kodokanproTests' do
     inherit! :search_paths
     # Pods for testing
