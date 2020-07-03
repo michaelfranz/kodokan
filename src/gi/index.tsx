@@ -117,11 +117,13 @@ const GiScreen = (): React.ReactElement<IProps> => {
           duration: 800,
           easing: Easing.linear,
           toValue: 0,
+          useNativeDriver: false,
         }),
         Animated.timing(animatedHotspotValue, {
           duration: 800,
           easing: Easing.linear,
           toValue: 1,
+          useNativeDriver: false,
         }),
       ])
     ).start()
@@ -220,6 +222,7 @@ const GiScreen = (): React.ReactElement<IProps> => {
       toValue: 0,
       easing: Easing.linear,
       duration: state.term ? 300 : 0, // no delay if current term undefined
+      useNativeDriver: false,
     }).start(callback)
   }
 
@@ -229,6 +232,7 @@ const GiScreen = (): React.ReactElement<IProps> => {
       duration: 300,
       easing: Easing.linear,
       toValue: 1,
+      useNativeDriver: false,
     }).start()
   }
 
@@ -252,9 +256,9 @@ const GiScreen = (): React.ReactElement<IProps> => {
 
   const renderedHotspots = giInfo
     .hotspots(state.isFront)
-    .map(hotspot => renderHotspot(hotspot))
+    .map((hotspot) => renderHotspot(hotspot))
 
-  const onImageContainerLayout = event => {
+  const onImageContainerLayout = (event) => {
     const { height } = event.nativeEvent.layout
     const imageHeightToWidthRatio =
       baseImageDimensions.width / baseImageDimensions.height
