@@ -730,6 +730,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 3SCR7NE44U;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = kodokanproTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -801,7 +802,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3SCR7NE44U;
 				HEADER_SEARCH_PATHS = (
@@ -835,6 +836,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.cuttingedge.kodokanpro;
 				PRODUCT_NAME = kodokanpro;
+				PROVISIONING_PROFILE_SPECIFIER = "KodokanPro Dist Profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "kodokanpro-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -882,6 +884,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 3SCR7NE44U;
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "kodokanpro-tvOS/Info.plist";
@@ -938,6 +941,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 3SCR7NE44U;
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "kodokanpro-tvOSTests/Info.plist";
@@ -1038,7 +1042,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = 3BGY8AZY85;
 				ENABLE_NS_ASSERTIONS = NO;
