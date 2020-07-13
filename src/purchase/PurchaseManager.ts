@@ -77,7 +77,7 @@ export default class PurchaseManager {
     return productName + "PurchaseKey";
   }
 
-  private productName: string;
+  private readonly productName: string;
 
   constructor(productName: string) {
     if (!PurchaseManager.productIdentifier(productName)) {
@@ -115,7 +115,7 @@ export default class PurchaseManager {
 
   public async purchaseProduct(): Promise<Transaction> {
     // Must call loadProduct() prior to purchaseProduct()
-    const product = await this.loadProduct();
+    await this.loadProduct();
     const productId = PurchaseManager.PRODUCT_ID_MAP.get(this.productName);
     const rawTransaction = await InAppUtils.purchaseProductAsync(productId);
     const transaction = new Transaction({

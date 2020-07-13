@@ -13,7 +13,6 @@ import TechniqueView from '../video/TechniqueView'
 import PurchaseHandler from '../purchase/PurchaseHandler'
 import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
 import { videoMap } from '../data/VideoInfo'
-import waza from '.'
 
 interface IProps {
   navigation: any
@@ -66,7 +65,7 @@ const WazaDetailScreen = ({
     ? techniqueInfo.wazaForClassificationTerm(classification)
     : []
 
-  const ListEl = useRef<FlatList<any>>(null)
+  const ListEl = useRef<FlatList>(null)
 
   useEffect(() => {
     setStateFromParams()
