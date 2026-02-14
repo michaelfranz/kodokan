@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/mikemannion/workspace/kodokan log --oneline -10)",
+      "Bash(git -C /Users/mikemannion/workspace/kodokan branch:*)",
+      "Bash(ls:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh api:*)",
+      "Bash(git remote rename:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(npx --version:*)",
+      "Bash(ruby:*)",
+      "Bash(pod --version:*)",
+      "Bash(xcode-select:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(java --version:*)",
+      "Bash(sudo gem install:*)",
+      "Bash(gem install:*)",
+      "Bash(export PATH=\"$HOME/.gem/ruby/2.6.0/bin:$PATH\")",
+      "Bash(brew:*)",
+      "Bash(npx @react-native-community/cli init:*)",
+      "Bash(npm install:*)",
+      "Bash(pod install)",
+      "Bash(npx react-native run-ios:*)",
+      "Bash(xcrun simctl:*)"
+    ]
+  }
+}
