@@ -9,14 +9,11 @@ import {
 } from 'react-native'
 import withScreenLayout from '../common/withScreenLayout'
 import { H3 } from '../common/text'
-import Spinner from 'react-native-loading-spinner-overlay'
 import { PRIMARY_COLOUR, GO, IK, NI, SAN, YON } from '../theme/colours'
 import TechniqueInfo from '../data/WazaInfo'
 import TechniqueView from '../video/TechniqueView'
-import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
 import { videoMap } from '../data/VideoInfo'
 import ArticleInfo from '../data/ArticleInfo'
-import PurchaseHandler from '../purchase/PurchaseHandler'
 
 const BackgroundLandscape = require('../images/background2L.png')
 const BackgroundPortrait = require('../images/background2P.png')
@@ -90,7 +87,6 @@ interface IProps {
 }
 
 interface IState {
-  isLoading: boolean
   currentKyo: KYO | null
   selectedTechnique: string | null
 }
@@ -106,7 +102,6 @@ const GokyoScreen = ({
   const isLandscape = orientation === 'landscape'
 
   const [state, setState] = useState<IState>({
-    isLoading: false,
     currentKyo: null,
     selectedTechnique: null,
   })
@@ -272,10 +267,6 @@ const GokyoScreen = ({
     })
   }
 
-  const longRunningOpCallback = (longOpIsRunning: boolean) => {
-    setState({ ...state, isLoading: longOpIsRunning })
-  }
-
   const renderTechnique = techniqueName => {
     const article = ArticleInfo.articleForTerm(techniqueName)
     if (!article) {
@@ -283,21 +274,6 @@ const GokyoScreen = ({
     }
     const { name, displayName, translation, kyo } = article
     const isInactive = state.currentKyo ? state.currentKyo !== kyo : false
-
-    const purchaseHandler = new PurchaseHandler(
-      VIDEO_PRODUCT,
-      () => {
-        setState({
-          ...state,
-          isLoading: false,
-        })
-        const video = videoMap.get(techniqueName)
-        video!.uri().then(result => {
-          showVideoScreen(result, techniqueName)
-        })
-      },
-      longRunningOpCallback
-    )
 
     return (
       <TechniqueView
@@ -315,7 +291,10 @@ const GokyoScreen = ({
             setState({ ...state, currentKyo: null, selectedTechnique: null })
             return
           }
-          purchaseHandler.conditionalPlay()
+          const video = videoMap.get(techniqueName)
+          video!.uri().then(result => {
+            showVideoScreen(result, techniqueName)
+          })
         }}
         key={techniqueName}
         renderKyoIndicator
@@ -375,11 +354,6 @@ const GokyoScreen = ({
       imageStyle={styles.backgroundImage}
     >
       <SafeAreaView style={styles.container}>
-        <Spinner
-          visible={state.isLoading}
-          textContent={'Contacting App Store...'}
-          textStyle={{ color: 'white' }}
-        />
         <View style={styles.innerContainer}>
           {renderKyoSelector()}
           {renderList()}

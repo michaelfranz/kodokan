@@ -1,4 +1,3 @@
-import { Analytics } from 'aws-amplify'
 import React, { useState, useEffect } from 'react'
 import {
   View,
@@ -10,7 +9,6 @@ import {
   SafeAreaView,
   SectionList,
 } from 'react-native'
-import Spinner from 'react-native-loading-spinner-overlay'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
 import {
   FOREGROUND_COLOUR_ALT,
@@ -24,8 +22,6 @@ import { styles as fontStyles, Text, H1, H2 } from '../common/text'
 import ArticleInfo from '../data/ArticleInfo'
 import Article from '../data/Article'
 import ArticleView from './ArticleView'
-import PurchaseHandler from '../purchase/PurchaseHandler'
-import { AUDIO_PRODUCT } from '../purchase/PurchaseManager'
 import TrackPlayer from 'react-native-track-player'
 import { articleAudio } from '../audio/ArticleMedia'
 import BookmarkInfo from '../data/BookmarkInfo'
@@ -90,7 +86,6 @@ export interface IDictionaryState {
   searchText: string
   articles: Article[]
   bookmarkDisplayMode: boolean
-  displaySpinner: boolean
   recentTerms: Article[]
   termOfTheDay: Article | undefined
 }
@@ -102,7 +97,6 @@ const DictionaryScreen = ({
   const isLandscape = orientation === 'landscape'
   const [dictionaryState, setDictionaryState] = useState<IDictionaryState>({
     searchText: '',
-    displaySpinner: false,
     articles: [],
     bookmarkDisplayMode: false,
     recentTerms: [],
@@ -110,12 +104,7 @@ const DictionaryScreen = ({
   })
   const hasSearchText = !!dictionaryState.searchText.trim().length
 
-  const longRunningOpCallback = (longOpIsRunning: boolean) => {
-    setDictionaryState({ ...dictionaryState, displaySpinner: longOpIsRunning })
-  }
-
   useEffect(() => {
-    TrackPlayer.registerEventHandler(playerEventHandler)
     initRecentAndTermOfTheDay()
   }, [])
 
@@ -125,7 +114,6 @@ const DictionaryScreen = ({
     const recentTermsWithArticles = ArticleInfo.articlesForTerms(recentTerms)
     setDictionaryState({
       ...dictionaryState,
-      displaySpinner: false,
       termOfTheDay,
       recentTerms: recentTermsWithArticles,
     })
@@ -136,7 +124,6 @@ const DictionaryScreen = ({
     const recentTermsWithArticles = ArticleInfo.articlesForTerms(recentTerms)
     setDictionaryState({
       ...dictionaryState,
-      displaySpinner: false,
       recentTerms: recentTermsWithArticles,
     })
   }
@@ -152,10 +139,6 @@ const DictionaryScreen = ({
     return articles.filter((article) => {
       return articleAudio[article.name]
     })
-  }
-
-  const playerEventHandler = async () => {
-    // Do nothing
   }
 
   useEffect(() => {
@@ -200,8 +183,6 @@ const DictionaryScreen = ({
   }
 
   const renderHeader = (): JSX.Element => {
-    Analytics.record({ name: 'dictionaryVisit' })
-
     return (
       <View style={styles.headerContainer}>
         <SearchBar
@@ -283,30 +264,16 @@ const DictionaryScreen = ({
     addToRecentsOnPlay?: boolean
     noBorder?: boolean
   }) => {
-    const purchaseHandler = new PurchaseHandler(
-      AUDIO_PRODUCT,
-      async (success: boolean) => {
-        setDictionaryState({
-          ...dictionaryState,
-          displaySpinner: false,
-        })
-        if (success) {
+    return (
+      <ArticleView
+        article={item}
+        onPress={async () => {
+          dismissKeyboard()
           if (addToRecentsOnPlay) {
             await TermsStore.addTermToRecent(item.name)
           }
           loadRecentTerms()
           playAudio(item.name)
-        }
-      },
-      longRunningOpCallback
-    )
-
-    return (
-      <ArticleView
-        article={item}
-        onPress={() => {
-          dismissKeyboard()
-          purchaseHandler.conditionalPlay()
         }}
         navigation={navigation}
         onBookmarkToggle={(isBookmarked) => {
@@ -409,11 +376,6 @@ const DictionaryScreen = ({
       imageStyle={styles.backgroundImage}
     >
       <SafeAreaView style={styles.container}>
-        <Spinner
-          visible={dictionaryState.displaySpinner}
-          textContent={'Contacting App Store...'}
-          textStyle={{ color: 'white' }}
-        />
         {renderHeader()}
         {renderBody()}
       </SafeAreaView>

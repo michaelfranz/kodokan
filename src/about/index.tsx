@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { View, ImageBackground, StyleSheet, SafeAreaView } from 'react-native'
-import {
-  AUDIO_PRODUCT,
-  default as PurchaseManager,
-  VIDEO_PRODUCT,
-} from '../purchase/PurchaseManager'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
 import { H1, H3, Text, HyperLink } from '../common/text'
 import { strings } from '../locales/i18n'
@@ -29,46 +24,6 @@ const styles = StyleSheet.create({
 const Caio = require('../images/caio.png')
 
 const AboutScreen = ({ orientation }): React.ReactElement<Props> => {
-  const [purchaseStatusAudio, setPurchaseStatusAudio] = useState(false)
-  const [purchaseStatusVideo, setPurchaseStatusVideo] = useState(false)
-  const audioPurchaseManager: PurchaseManager = new PurchaseManager(
-    AUDIO_PRODUCT
-  )
-  const videoPurchaseManager: PurchaseManager = new PurchaseManager(
-    VIDEO_PRODUCT
-  )
-
-  const setPurchaseState = () => {
-    audioPurchaseManager.isPurchased().then(purchased => {
-      setPurchaseStatusAudio(purchased)
-    })
-    videoPurchaseManager.isPurchased().then(purchased => {
-      setPurchaseStatusVideo(purchased)
-    })
-  }
-
-  useEffect(() => {
-    setPurchaseState()
-  }, [])
-
-  const audioPurchaseTextKey = purchaseStatusAudio
-    ? 'AboutScreen.PurchasePurchased'
-    : 'AboutScreen.PurchaseEvaluating'
-  const audioPurchaseComponent = (
-    <Text>
-      {strings('AudioProduct')}: {strings(audioPurchaseTextKey)}
-    </Text>
-  )
-
-  const videoPurchaseTextKey = purchaseStatusVideo
-    ? 'AboutScreen.PurchasePurchased'
-    : 'AboutScreen.PurchaseEvaluating'
-  const videoPurchaseComponent = (
-    <Text>
-      {strings('VideoProduct')}: {strings(videoPurchaseTextKey)}
-    </Text>
-  )
-
   const isLandscape = orientation === 'landscape'
 
   return (
@@ -106,11 +61,6 @@ const AboutScreen = ({ orientation }): React.ReactElement<Props> => {
               <H3>{strings('AboutScreen.Judoka')}</H3>
               <Text>{strings('AboutScreen.Hanspi')}</Text>
               <Text>{strings('AboutScreen.Markus')}</Text>
-            </View>
-            <View style={{ flex: 3 }}>
-              <H3>{strings('AboutScreen.PurchaseOptions')}</H3>
-              {audioPurchaseComponent}
-              {videoPurchaseComponent}
             </View>
             <View style={{ flex: 4 }}>
               <H3>{strings('AboutScreen.Thanks')}</H3>

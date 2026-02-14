@@ -9,8 +9,6 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-import PurchaseManager, { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
-
 import Video from 'react-native-video'
 import { BACKGROUND_COLOUR } from '../theme/colours'
 import withScreenLayout, { Props } from '../common/withScreenLayout'
@@ -59,12 +57,6 @@ class VideoScreen extends React.Component<Props, IState> {
     headerShown: false,
   }
 
-  // @ts-ignore
-  private ga = (this.ga = null)
-
-  /// @ts-ignore
-  private purchaseManager: PurchaseManager
-
   private player: any
 
   public constructor(props) {
@@ -74,7 +66,6 @@ class VideoScreen extends React.Component<Props, IState> {
       videoURI: undefined,
       controlsDisabled: false,
     }
-    this.purchaseManager = new PurchaseManager(VIDEO_PRODUCT)
   }
 
   public componentDidMount() {

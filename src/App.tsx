@@ -1,8 +1,5 @@
-import Amplify from 'aws-amplify'
-import awsconfig from './aws-exports'
-import React, { useEffect } from 'react'
-import { Image, StyleSheet, YellowBox } from 'react-native'
-import SplashScreen from 'react-native-splash-screen'
+import React from 'react'
+import { Image, StyleSheet, LogBox } from 'react-native'
 import { PRIMARY_COLOUR, BACKGROUND_COLOUR } from './theme/colours'
 import { createAppContainer } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
@@ -16,16 +13,9 @@ import WazaDetailScreen from './waza/DetailScreen'
 import { FONT_FAMILY_SUBHEADING } from './theme/type'
 import VideoScreen from './video/VideoScreen'
 
-/*
-these warnings are caused by packages in node_modules
-and i18n.getLanguages()
-*/
-YellowBox.ignoreWarnings([
+LogBox.ignoreLogs([
   'Require cycle: node_modules/',
-  'Please report: Excessive number',
 ])
-
-Amplify.configure(awsconfig)
 
 const styles = StyleSheet.create({
   icon: {
@@ -167,10 +157,6 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator)
 
 const App = (): React.ReactElement<{}> => {
-  useEffect(() => {
-    SplashScreen.hide()
-  }, [])
-
   return <AppContainer />
 }
 

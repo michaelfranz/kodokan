@@ -10,8 +10,6 @@ import withScreenLayout from '../common/withScreenLayout'
 import TechniqueInfo from '../data/WazaInfo'
 import ArticleInfo from '../data/ArticleInfo'
 import TechniqueView from '../video/TechniqueView'
-import PurchaseHandler from '../purchase/PurchaseHandler'
-import { VIDEO_PRODUCT } from '../purchase/PurchaseManager'
 import { videoMap } from '../data/VideoInfo'
 
 interface IProps {
@@ -22,7 +20,6 @@ interface IProps {
 
 interface IState {
   classification?: string | undefined
-  isSpinnerVisible?: boolean
   selectedTechnique?: string | undefined
 }
 
@@ -99,10 +96,6 @@ const WazaDetailScreen = ({
     })
   }
 
-  const longRunningOpCallback = (longOpIsRunning: boolean) => {
-    setState({ ...state, isSpinnerVisible: longOpIsRunning })
-  }
-
   const showVideoScreen = uri => {
     setState({
       ...state,
@@ -120,21 +113,6 @@ const WazaDetailScreen = ({
 
     const { name, displayName, translation } = article
 
-    const purchaseHandler = new PurchaseHandler(
-      VIDEO_PRODUCT,
-      () => {
-        setState({
-          ...state,
-          isSpinnerVisible: false,
-        })
-        const video = videoMap.get(item)
-        video!.uri().then(result => {
-          showVideoScreen(result)
-        })
-      },
-      longRunningOpCallback
-    )
-
     return (
       <TechniqueView
         isSelected={name === state.selectedTechnique}
@@ -146,7 +124,10 @@ const WazaDetailScreen = ({
             ...state,
             selectedTechnique: undefined,
           })
-          purchaseHandler.conditionalPlay()
+          const video = videoMap.get(item)
+          video!.uri().then(result => {
+            showVideoScreen(result)
+          })
         }}
         isOnline={isOnline}
       />
