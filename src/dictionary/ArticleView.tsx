@@ -1,12 +1,10 @@
-// noinspection TsLint
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Article from '../data/Article'
 import { FOREGROUND_COLOUR } from '../theme/colours'
 import BookmarkInfo from '../data/BookmarkInfo'
-import useIsMounted from 'ismounted'
 import { Text, H2 } from '../common/text'
 
 const ImageDictGokyo = require('../images/dict-gokyo.png')
@@ -48,8 +46,12 @@ const ArticleView = ({
   navigation,
   onBookmarkToggle,
 }: IProps): React.ReactElement<IProps> => {
-  const isMounted = useIsMounted()
+  const isMountedRef = useRef(true)
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
+
+  useEffect(() => {
+    return () => { isMountedRef.current = false }
+  }, [])
 
   const showScreen = (screen: string, term: string) => {
     dismissKeyboard()
@@ -62,7 +64,7 @@ const ArticleView = ({
   useEffect(() => {
     const term = article.name
     BookmarkInfo.isBookmarked(term).then(value => {
-      if (isMounted) {
+      if (isMountedRef.current) {
         setIsBookmarked(value)
       }
     })

@@ -1,5 +1,6 @@
 import { I18nManager } from 'react-native'
-import I18n from 'react-native-i18n'
+import * as RNLocalize from 'react-native-localize'
+import I18n from 'i18n-js'
 
 import de from './de.json'
 import en from './en.json'
@@ -19,10 +20,15 @@ I18n.translations = {
   jp,
 }
 
+const locales = RNLocalize.getLocales()
+if (locales.length > 0) {
+  I18n.locale = locales[0].languageTag
+}
+
 export const isRTL = false
 
 I18nManager.allowRTL(isRTL)
 
-export function strings(name, params = {}) {
+export function strings(name: string, params = {}) {
   return I18n.t(name, params)
 }

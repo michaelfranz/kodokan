@@ -30,5 +30,18 @@ target 'KodokanPro' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # react-native-netinfo requires NetworkExtension framework
+    # Patch the Pods-KodokanPro xcconfig to include the framework in the app link step
+    ['Debug', 'Release'].each do |config_name|
+      xcconfig_path = File.join(installer.sandbox.root, "Target Support Files", "Pods-KodokanPro", "Pods-KodokanPro.#{config_name.downcase}.xcconfig")
+      if File.exist?(xcconfig_path)
+        content = File.read(xcconfig_path)
+        unless content.include?('-framework "NetworkExtension"')
+          content.gsub!(/^OTHER_LDFLAGS = (.*)$/, 'OTHER_LDFLAGS = \1 -framework "NetworkExtension"')
+          File.write(xcconfig_path, content)
+        end
+      end
+    end
   end
 end

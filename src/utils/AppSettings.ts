@@ -1,5 +1,5 @@
-import { getLanguages } from 'react-native-i18n'
-import store from 'react-native-simple-store'
+import * as RNLocalize from 'react-native-localize'
+import store from './store'
 
 const SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it', 'es', 'ja']
 const DICTIONARY_LANGUAGE_KEY = 'dictionaryLanguage'
@@ -27,11 +27,10 @@ export default class AppSettings {
     return await store.get(DICTIONARY_LANGUAGE_KEY)
   }
 
-  private static async preferredSupportedLanguage() {
-    const allLanguages = await getLanguages()
-
-    const preferredLanguages = allLanguages.map((locale) =>
-      AppSettings.country(locale)
+  private static preferredSupportedLanguage() {
+    const locales = RNLocalize.getLocales()
+    const preferredLanguages = locales.map((locale) =>
+      AppSettings.country(locale.languageTag)
     )
     return preferredLanguages.find(AppSettings.isSupportedLanguage) // may return *undefined*
   }

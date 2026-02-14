@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TextStyle,
   Linking,
-  TextProperties,
+  TextProps as TextProperties,
 } from 'react-native'
 import { FONT_FAMILY_SUBHEADING, FONT_FAMILY_BASE } from '../theme/type'
 import { FONT_FAMILY_HEADING } from '../theme/type'

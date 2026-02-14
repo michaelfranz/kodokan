@@ -1,4 +1,4 @@
-import store from 'react-native-simple-store'
+import store from '../utils/store'
 import Article from './Article'
 import ArticleInfo from './ArticleInfo'
 

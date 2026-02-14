@@ -18,6 +18,7 @@ export interface Props {
   orientation: 'landscape' | 'portrait'
   isOnline: boolean | null
   navigation: any
+  route?: any
 }
 
 const withScreenLayout = <P extends {}>(
@@ -28,7 +29,6 @@ const withScreenLayout = <P extends {}>(
     const [orientation, setOrientation] = useState<'landscape' | 'portrait'>(
       'portrait'
     )
-    let networkUnsubscribeHandler: null | NetInfoSubscription = null
     const [isOnline, setIsOnline] = useState<boolean | null>(null)
 
     const getOrientation = () => {
@@ -40,30 +40,22 @@ const withScreenLayout = <P extends {}>(
     }
 
     useEffect(() => {
-      setNetworkStatusListener()
+      const networkUnsubscribe: NetInfoSubscription = NetInfo.addEventListener(
+        (networkState) => {
+          setIsOnline(networkState.isInternetReachable)
+        }
+      )
+
       getOrientation()
-      Dimensions.addEventListener('change', () => {
+      const subscription = Dimensions.addEventListener('change', () => {
         getOrientation()
       })
 
       return () => {
-        Dimensions.removeEventListener('change', () => {
-          getOrientation()
-        })
-
-        networkUnsubscribeHandler && networkUnsubscribeHandler()
+        subscription.remove()
+        networkUnsubscribe()
       }
     }, [])
-
-    const handleConnectivityChange = networkState => {
-      setIsOnline(networkState.isInternetReachable)
-    }
-
-    const setNetworkStatusListener = () => {
-      networkUnsubscribeHandler = NetInfo.addEventListener(
-        handleConnectivityChange
-      )
-    }
 
     dismissKeyboard()
     return (
