@@ -63,6 +63,9 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
+# Old project backup
+kodokanpro-old/
+
 #amplify
 amplify/\#current-cloud-backend
 amplify/.config/local-*
