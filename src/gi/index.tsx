@@ -6,6 +6,7 @@ import {
   Easing,
   TouchableOpacity,
   Animated,
+  LayoutChangeEvent,
 } from 'react-native'
 import GiInfo, { baseImageDimensions } from '../data/GiInfo'
 import withScreenLayout from '../common/withScreenLayout'
@@ -258,7 +259,7 @@ const GiScreen = (): React.ReactElement<IProps> => {
     .hotspots(state.isFront)
     .map((hotspot) => renderHotspot(hotspot))
 
-  const onImageContainerLayout = (event) => {
+  const onImageContainerLayout = (event: LayoutChangeEvent) => {
     const { height } = event.nativeEvent.layout
     const imageHeightToWidthRatio =
       baseImageDimensions.width / baseImageDimensions.height
@@ -266,6 +267,7 @@ const GiScreen = (): React.ReactElement<IProps> => {
     setState({
       ...state,
       imageHeight: height,
+
       imageWidth: height * imageHeightToWidthRatio,
     })
   }
