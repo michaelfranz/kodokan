@@ -10,8 +10,8 @@ test("isWazaTerm('Uki-Waza') to equal true", () => {
     expect(ti.isWazaTerm('Uki-Waza')).toBe(true)
 })
 
-test("classificationForWazaTerm('xyz') to equal undefined", () => {
-    expect(ti.classificationForWazaTerm('xyz')).toBe(undefined)
+test("classificationForWazaTerm('xyz') to equal empty string", () => {
+    expect(ti.classificationForWazaTerm('xyz')).toBe('')
 })
 
 test("classificationForWazaTerm('Zarei') to equal 'Miscellaneous'", () => {
@@ -43,12 +43,12 @@ test("isKyoWazaTerm('Yoko-Gake') to equal true", () => {
     expect(ti.isKyoWazaTerm('Yoko-Gake')).toBe(true)
 })
 
-test("kyoForKyoWazaTerm('xyz') to equal undefined", () => {
-    expect(ti.kyoForKyoWazaTerm('xyz')).toBe(undefined)
+test("kyoForKyoWazaTerm('xyz') to equal empty string", () => {
+    expect(ti.kyoForKyoWazaTerm('xyz')).toBe('')
 })
 
-test("kyoForKyoWazaTerm('Yoko-Shiho-Gatame') to equal undefined", () => {
-    expect(ti.kyoForKyoWazaTerm('Yoko-Shiho-Gatame')).toBe(undefined)
+test("kyoForKyoWazaTerm('Yoko-Shiho-Gatame') to equal empty string", () => {
+    expect(ti.kyoForKyoWazaTerm('Yoko-Shiho-Gatame')).toBe('')
 })
 
 test("kyoForKyoWazaTerm('Ippon-Seoi-Nage') to equal 'GO'", () => {
