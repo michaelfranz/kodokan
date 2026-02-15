@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
 interface IProps {
   orientation: 'landscape' | 'portrait'
   navigation: any
+  route?: any
   isOnline: boolean | null
 }
 
@@ -98,6 +99,7 @@ const techniqueInfo = TechniqueInfo.getInstance()
 const GokyoScreen = ({
   orientation,
   navigation,
+  route,
 }): React.ReactElement<IProps> => {
   const isLandscape = orientation === 'landscape'
 
@@ -129,7 +131,7 @@ const GokyoScreen = ({
 
   useEffect(() => {
     setStateFromParams()
-  }, [navigation.state.params])
+  }, [route?.params])
 
   useEffect(() => {
     setTimeout(() => {
@@ -153,7 +155,7 @@ const GokyoScreen = ({
   }, [orientation])
 
   const setStateFromParams = () => {
-    const { params = {} } = navigation.state
+    const params = route?.params || {}
     const { term: selectedTechnique } = params
 
     dismissKeyboard()

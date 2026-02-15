@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
 interface IProps {
   orientation: 'landscape' | 'portrait'
   navigation: any
+  route?: any
 }
 
 interface IState {
@@ -60,6 +61,7 @@ interface IState {
 const WazaScreen = ({
   orientation,
   navigation,
+  route,
 }): React.ReactElement<IProps> => {
   const isLandscape = orientation === 'landscape'
   const [state, setState] = useState<IState>({})
@@ -70,16 +72,14 @@ const WazaScreen = ({
   const data = techniqueInfo.wazaClassifications()
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('didFocus', () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       setStateFromParams()
     })
 
     setStateFromParams()
 
-    return () => {
-      unsubscribe.remove()
-    }
-  }, [navigation.state.params])
+    return unsubscribe
+  }, [route?.params])
 
   useEffect(() => {
     if (state.selectedTechnique && state.classification) {
@@ -104,7 +104,7 @@ const WazaScreen = ({
   }
 
   const setStateFromParams = () => {
-    const { params = {} } = navigation.state
+    const params = route?.params || {}
     if (!params) {
       setState({
         classification: undefined,

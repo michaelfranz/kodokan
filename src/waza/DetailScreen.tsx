@@ -14,6 +14,7 @@ import { videoMap } from '../data/VideoInfo'
 
 interface IProps {
   navigation: any
+  route?: any
   orientation: 'landscape' | 'portrait'
   isOnline: boolean | null
 }
@@ -52,6 +53,7 @@ const styles = StyleSheet.create({
 const WazaDetailScreen = ({
   orientation,
   navigation,
+  route,
   isOnline,
 }): React.ReactElement<IProps> => {
   const isLandscape = orientation === 'landscape'
@@ -66,7 +68,7 @@ const WazaDetailScreen = ({
 
   useEffect(() => {
     setStateFromParams()
-  }, [navigation.state.params])
+  }, [route?.params])
 
   useEffect(() => {
     setTimeout(() => {
@@ -78,7 +80,7 @@ const WazaDetailScreen = ({
   }, [state.selectedTechnique])
 
   const setStateFromParams = () => {
-    const { params } = navigation.state
+    const params = route?.params || {}
     const { classification, selectedTechnique } = params
 
     dismissKeyboard()

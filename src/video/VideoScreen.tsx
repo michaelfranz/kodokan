@@ -69,8 +69,7 @@ class VideoScreen extends React.Component<Props, IState> {
   }
 
   public componentDidMount() {
-    const { state } = this.props.navigation
-    const { params } = state
+    const params = this.props.route?.params || {}
     this.setStateFromParams(params)
   }
 
@@ -129,7 +128,7 @@ class VideoScreen extends React.Component<Props, IState> {
   }
 
   private callOnGoBackIfExists = () => {
-    const { params = {} } = this.props.navigation.state
+    const params = this.props.route?.params || {}
     if (params.onGoBack) {
       params.onGoBack({ orientation: this.props.orientation })
     }
@@ -144,7 +143,7 @@ class VideoScreen extends React.Component<Props, IState> {
         controlsDisabled: true, // this is to prevent onEnd callback being called multiple times
       },
       () => {
-        this.props.navigation.goBack(null)
+        this.props.navigation.goBack()
         this.callOnGoBackIfExists()
       }
     )
@@ -159,7 +158,7 @@ class VideoScreen extends React.Component<Props, IState> {
 
   private onEnd = () => {
     const { navigation } = this.props
-    navigation.goBack(null)
+    navigation.goBack()
     this.callOnGoBackIfExists()
   }
 }
