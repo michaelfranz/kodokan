@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   StyleSheet,
@@ -95,6 +95,7 @@ const DictionaryScreen = ({
   navigation,
 }): React.ReactElement<Props> => {
   const isLandscape = orientation === 'landscape'
+  const playerReady = useRef(false)
   const [dictionaryState, setDictionaryState] = useState<IDictionaryState>({
     searchText: '',
     articles: [],
@@ -105,6 +106,9 @@ const DictionaryScreen = ({
   const hasSearchText = !!dictionaryState.searchText.trim().length
 
   useEffect(() => {
+    TrackPlayer.setupPlayer().then(() => {
+      playerReady.current = true
+    })
     initRecentAndTermOfTheDay()
   }, [])
 
@@ -229,7 +233,7 @@ const DictionaryScreen = ({
 
   const keyExtractor = (item) => item.name
 
-  const playAudio = (name: string) => {
+  const playAudio = async (name: string) => {
     const audioURI = articleAudio[name]
 
     if (!audioURI) {
@@ -242,17 +246,19 @@ const DictionaryScreen = ({
       return
     }
 
-    TrackPlayer.reset() // stops whatever is currently playing, clears audio queue
-    TrackPlayer.setupPlayer().then(async () => {
-      // Adds a track to the queue
-      await TrackPlayer.add({
-        id: name,
-        title: name,
-        url: audioURI,
-        artist: 'KodokanPro',
-      })
-      TrackPlayer.play()
+    if (!playerReady.current) {
+      await TrackPlayer.setupPlayer()
+      playerReady.current = true
+    }
+
+    await TrackPlayer.reset()
+    await TrackPlayer.add({
+      id: name,
+      title: name,
+      url: audioURI,
+      artist: 'KodokanPro',
     })
+    await TrackPlayer.play()
   }
 
   const renderArticle = ({

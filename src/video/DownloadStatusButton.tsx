@@ -224,7 +224,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
   const renderDownloadedElement = () => {
     return (
       <Ionicons
-        name="md-checkmark-circle"
+        name="checkmark-circle"
         size={24}
         color={FOREGROUND_COLOUR_ALT}
       />
@@ -234,7 +234,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
   const renderOnlineNotDownloadedElement = () => {
     return (
       <Ionicons
-        name="ios-cloud-download"
+        name="cloud-download"
         size={24}
         color={FOREGROUND_COLOUR_ALT}
       />
@@ -243,7 +243,7 @@ const DownloadStatusButton: React.FunctionComponent<IProps> = ({
 
   const renderOfflineNotDownloadedElement = () => {
     return (
-      <Ionicons name="ios-warning" size={24} color={FOREGROUND_COLOUR_ALT} />
+      <Ionicons name="warning" size={24} color={FOREGROUND_COLOUR_ALT} />
     )
   }
 
